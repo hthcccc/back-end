@@ -110,6 +110,16 @@ public class GoodService implements IDGenenrator{
         return goodRepo.getGoodByName(name);
     }
 
+    public String getUrl(String g_id)
+    {
+        if(goodRepo.existsById(g_id)){
+            return goodRepo.findById(g_id).get().getUrl();
+        }
+        else{
+            return null;
+        }
+    }
+
     @Override
     public StringBuilder tryGetID(int length) {
         StringBuilder id=new StringBuilder();

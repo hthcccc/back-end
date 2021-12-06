@@ -22,6 +22,14 @@ public class goodController {
         return tmp.getById(id);
     }
 
+    @GetMapping("/getGoodUrl/{id}")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value = "获取商品图片url", notes = "商品id")
+    public String getGoodUrl(@PathVariable String id)
+    {
+        return tmp.getUrl(id);
+    }
+
     @GetMapping("/getGoodPart/")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "获取所有商品分区")

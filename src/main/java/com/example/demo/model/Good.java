@@ -34,6 +34,17 @@ public class Good {
     @Column(name = "good_state")
     private String goodState;
 
+    @Column(name="pict_url")
+    private String url;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getGoodState() {
         return goodState;
     }
