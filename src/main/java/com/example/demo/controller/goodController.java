@@ -17,6 +17,7 @@ public class goodController {
 
     @GetMapping("/getGood/{id}")
     @ApiGroup(group = {"good"})
+    @ApiOperation(value = "按照id获取商品",notes = "商品id")
     public Good getGood(@PathVariable String id)
     {
         return tmp.getById(id);
@@ -40,21 +41,23 @@ public class goodController {
 
     @GetMapping("/getGoodByUser/{user_id}")
     @ApiGroup(group = {"good"})
+    @ApiOperation(value="获取某个用户的所有商品",notes = "用户id")
     public List<Good> getGoodByUser(@PathVariable String user_id)
     {
         return tmp.getGoodByUser(user_id);
     }
 
-    @GetMapping("/getGoodByName/{name}")
+    @GetMapping("/getGoodOnShellByName/{name}")
     @ApiGroup(group = {"good"})
-    public List<Good> getGoodByName(@PathVariable String name)
+    @ApiOperation(value="按商品名字获取所有上架中的商品")
+    public List<Good> getGoodOnShellByName(@PathVariable String name)
     {
         return tmp.getGoodByName(name);
     }
 
     @PostMapping("/setGood")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "setGood",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费")
+    @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费")
     public void setGood(@RequestBody Good good){
         tmp.setGood(good.getId(),good.getName(),
                 good.getPart(),good.getInventory(),
@@ -63,13 +66,14 @@ public class goodController {
 
     @PostMapping("/setGoodState")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "setGoodState",notes = "商品id，商品新状态")
+    @ApiOperation(value = "设置商品状态",notes = "商品id，商品新状态")
     public void setGoodState(@RequestBody Good good){
         tmp.setGoodState(good.getId(),good.getGoodState());
     }
 
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
+    @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
     public void releaseGood(@RequestBody Good good){
         tmp.releaseGood(good.getSellerId(),good.getName(),
                 good.getPart(),good.getInventory(),

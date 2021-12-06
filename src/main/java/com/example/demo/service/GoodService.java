@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+
+
 enum goodstate{
     待审核,上架中,已下架,缺货;
 
@@ -73,6 +75,8 @@ public class GoodService implements IDGenenrator{
             good.setPrice(prize);
             good.setFreight(freight);
             good.setGoodState("待审核");
+            String pict_url=url+good.getId()+good.getUrl().substring(good.getUrl().lastIndexOf("."));
+            good.setUrl(pict_url);
             goodRepo.save(good);
         }
     }
@@ -120,6 +124,14 @@ public class GoodService implements IDGenenrator{
         }
     }
 
+    public Double getSum(String g_id,int num){
+        if(goodRepo.existsById(g_id)){
+            Good good=goodRepo.findById(g_id).get();
+            return good.getPrice()*num+good.getFreight();
+        }
+        return 0.0;
+    }
+
     @Override
     public StringBuilder tryGetID(int length) {
         StringBuilder id=new StringBuilder();
@@ -139,4 +151,6 @@ public class GoodService implements IDGenenrator{
             if(!goodRepo.existsById(id.toString())) return id.toString();
         }
     }
+
+    final public static String url = "116.62.208.68:9000/project/";
 }

@@ -16,4 +16,5 @@ public interface goodRepository  extends JpaRepository<Good,String> {
     @Transactional//开启事务
     @Query("select t from Good t where t.name=?1 and t.goodState='上架中'")
     List<Good> getGoodByName(String name);
+
 }

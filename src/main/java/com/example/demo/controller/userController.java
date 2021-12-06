@@ -28,6 +28,7 @@ public class userController {
 
     @GetMapping("/checkPassword/{id}")
     @ApiGroup(group = {"user"})
+    @ApiOperation(value = "查询用户信用评分",notes = "用户id")
     public double getCredit(String id){
         return tmp.getCredit(id);
     }
@@ -42,6 +43,7 @@ public class userController {
 
     @PostMapping(value = "/setUserName")
     @ApiGroup(group = {"user"})
+    @ApiOperation(value = "设置用户名字",notes="用户id，用户新名字")
     public void setUserName(@RequestBody User user1) {
         tmp.setUserName(user1.getUserId(),user1.getName());
     }
