@@ -5,10 +5,14 @@ import com.example.demo.model.Part;
 import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.partRepository;
 import com.example.demo.repository.userRepository;
+import io.minio.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +42,8 @@ public class GoodService implements IDGenenrator{
     userRepository userRepo;
     @Autowired
     partRepository partRepo;
+    @Resource
+    MinioClient client;
 
     public Good getById(String Id)
     {
@@ -62,7 +68,7 @@ public class GoodService implements IDGenenrator{
 
     public void releaseGood(String u_id,String name,
                             String part,Integer inventory,
-                        String info,Double prize,Double freight)
+                        String info,Double prize,Double freight,MultipartFile file)
     {
         if(userRepo.existsById(u_id)) {
             Good good=new Good();
@@ -75,15 +81,14 @@ public class GoodService implements IDGenenrator{
             good.setPrice(prize);
             good.setFreight(freight);
             good.setGoodState("待审核");
-            String pict_url=url+good.getId()+good.getUrl().substring(good.getUrl().lastIndexOf("."));
-            good.setUrl(pict_url);
+            setUrl(good.getId(),file);
             goodRepo.save(good);
         }
     }
 
     public void setGood(String g_id,String name,
                             String part,Integer inventory,
-                            String info,Double prize,Double freight)
+                            String info,Double prize,Double freight,MultipartFile file)
     {
         if(goodRepo.existsById(g_id)) {
             Good good=goodRepo.findById(g_id).get();
@@ -93,6 +98,7 @@ public class GoodService implements IDGenenrator{
             if(!info.isEmpty()){good.setInfo(info);}
             if(prize>0){good.setPrice(prize);}
             if(freight>=0){good.setFreight(freight);}
+            if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
             goodRepo.save(good);
         }
     }
@@ -124,6 +130,39 @@ public class GoodService implements IDGenenrator{
         }
     }
 
+    public boolean setUrl(String g_id,MultipartFile file){
+        if(goodRepo.existsById(g_id)){
+            try {
+                Good good= goodRepo.findById(g_id).get();
+                if(!(good.getUrl()==null)&&!good.getUrl().equals(url+"default.jpeg")){
+                    //删除minio的图片文件
+                    client.removeObject(RemoveObjectArgs.builder()
+                            .bucket("project")
+                            .object(good.getUrl().replaceFirst(url,""))
+                            .build());
+                }
+                //上传照片到minio
+                if(!(file==null)&&!file.isEmpty()) {
+                    client.putObject(
+                            PutObjectArgs.builder()
+                                    .bucket("project")
+                                    .object(file.getOriginalFilename())
+                                    .contentType(file.getContentType())
+                                    .stream(file.getInputStream(),file.getSize(),-1)
+                                    .build());
+
+                    good.setUrl(url + file.getOriginalFilename());
+                    goodRepo.save(good);
+                    return true;
+                }
+            } catch (Exception e) {
+                System.out.println("上传失败");
+                return false;
+            }
+        }
+        return false;
+    }
+
     public Double getSum(String g_id,int num){
         if(goodRepo.existsById(g_id)){
             Good good=goodRepo.findById(g_id).get();
@@ -152,5 +191,5 @@ public class GoodService implements IDGenenrator{
         }
     }
 
-    final public static String url = "116.62.208.68:9000/project/";
+    final public static String url = "http://116.62.208.68:9000/project/";
 }

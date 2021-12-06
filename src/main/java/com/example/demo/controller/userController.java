@@ -15,6 +15,7 @@ public class userController {
 
     @GetMapping("/getUser/{id}")
     @ApiGroup(group = {"user"})
+    @ApiOperation(value = "通过id查询用户",notes="用户id")
     public User getUser(@PathVariable String id)
     {
         return tmp.getById(id);
@@ -22,7 +23,8 @@ public class userController {
 
     @GetMapping("/checkPassword/{id,password}")
     @ApiGroup(group = {"user"})
-    public int checkPassword(String id,String pwd){
+    @ApiOperation(value = "校验用户和密码",notes = "用户id，密码")
+    public int checkPassword(@PathVariable String id,@PathVariable String pwd){
         return tmp.checkPassword(id,pwd);
     }
 

@@ -5,9 +5,12 @@ import com.example.demo.model.Good;
 import com.example.demo.service.GoodService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+
 
 @RestController("good")
 @RequestMapping("/good")
@@ -57,26 +60,44 @@ public class goodController {
 
     @PostMapping("/setGood")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费")
-    public void setGood(@RequestBody Good good){
-        tmp.setGood(good.getId(),good.getName(),
-                good.getPart(),good.getInventory(),
-                good.getInfo(),good.getPrice(),good.getFreight());
+    @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费，图片")
+    public void setGood(@RequestParam("g_id") String g_id,
+                        @RequestParam("name") String name,
+                        @RequestParam("part") String part,
+                        @RequestParam("inventory") Integer inventory,
+                        @RequestParam("info") String info,
+                        @RequestParam("price") Double price,
+                        @RequestParam("freight") Double freight,
+                        @RequestParam("file") MultipartFile file){
+        tmp.setGood(g_id,name,part,inventory,info,price,freight,file);
     }
 
     @PostMapping("/setGoodState")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "设置商品状态",notes = "商品id，商品新状态")
-    public void setGoodState(@RequestBody Good good){
-        tmp.setGoodState(good.getId(),good.getGoodState());
+    public void setGoodState(@RequestParam("g_id") String g_id, @RequestParam("newstate") String newstate){
+        tmp.setGoodState(g_id,newstate);
+    }
+
+    @Transactional
+    @PostMapping("/setGoodPicture")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value = "更换/上传商品图片",notes="商品id，商品图片")
+    public boolean setGoodPicture(@RequestParam("g_id") String g_id, @RequestParam("file") MultipartFile file){
+        return tmp.setUrl(g_id,file);
     }
 
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
-    public void releaseGood(@RequestBody Good good){
-        tmp.releaseGood(good.getSellerId(),good.getName(),
-                good.getPart(),good.getInventory(),
-                good.getInfo(),good.getPrice(),good.getFreight());
+    public void releaseGood(@RequestParam("u_id") String u_id,
+                            @RequestParam("name") String name,
+                            @RequestParam("part") String part,
+                            @RequestParam("inventory") Integer inventory,
+                            @RequestParam("info") String info,
+                            @RequestParam("price") Double price,
+                            @RequestParam("freight") Double freight,
+                            @RequestParam("file") MultipartFile file){
+        tmp.releaseGood(u_id,name,part,inventory,info,price,freight,file);
     }
 }
