@@ -59,6 +59,10 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.Order,"orderApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket refundAPI(){
+        return createBean(ApiGroupInfo.Refund,"refundApi", ApiGroupInfo.VERSION);
+    }
 
 
 

@@ -6,4 +6,5 @@ public interface ApiGroupInfo {
     String Good="good";
     String Order="order";
     String Comment="comment";
+    String Refund="refund";
 }

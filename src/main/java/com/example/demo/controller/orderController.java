@@ -27,4 +27,13 @@ public class orderController {
                                 @RequestParam("num") Integer num){
         return tmp.generateOrder(u_id,g_id,b_addr,s_addr,num);
     }
+
+    @Transactional
+    @PostMapping("/payOrder")
+    @ApiGroup(group = {"order"})
+    @ApiOperation(value = "支付订单",notes = "订单id")
+    public boolean payOrder(@RequestParam("order_id") String order_id){
+        return tmp.payOrder(order_id);
+    }
+
 }

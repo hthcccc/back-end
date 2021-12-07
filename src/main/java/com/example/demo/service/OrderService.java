@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.Good;
 import com.example.demo.model.TradeOrder;
+import com.example.demo.model.User;
 import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.orderRepository;
 import com.example.demo.repository.userRepository;
@@ -50,6 +51,40 @@ public class OrderService implements IDGenenrator{
             return id;
         }
         return null;
+    }
+
+    public boolean payOrder(String o_id){
+        if(!orderRepo.existsById(o_id)){return false;}
+        TradeOrder order= orderRepo.getOne(o_id);
+        if(!order.getOrderState().equals("未支付")){return false;}
+        User user=userRepo.getOne(order.getBuyerId());
+        Good good=goodRepo.getOne(order.getGoodId());
+        if(!good.getGoodState().equals("上架中")){return false;}
+        if(order.getNum()<=good.getInventory()){
+            if(user.getBalance()>=order.getPrice()){
+                order.setOrderState("待发货");
+                user.setBalance(user.getBalance()-order.getPrice());
+                good.setInventory(good.getInventory()-order.getNum());
+                orderRepo.save(order);
+                userRepo.save(user);
+                orderRepo.save(order);
+                return true;
+            }else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+
+    public void refund(String o_id){
+        if(!orderRepo.existsById(o_id)){return;}
+        TradeOrder order=orderRepo.getOne(o_id);
+        if(!order.getOrderState().equals("待发货") && !order.getOrderState().equals("待收货")){return;}
+        if(order.getIsRefunding().equals('y')){return;}
+        order.setIsRefunding("y");
+        orderRepo.save(order);
     }
 
     @Override
