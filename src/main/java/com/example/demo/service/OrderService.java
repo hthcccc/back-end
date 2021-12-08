@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -35,13 +36,12 @@ public class OrderService implements IDGenenrator{
             order.setId(id);
             order.setBuyerId(u_id);
             order.setGoodId(g_id);
-            Good good=goodRepo.findById(g_id).get();
-            if(good.getInventory()>=num){
+            if(goodRepo.isEnough(g_id,num)>0){
                 order.setNum(num);
             }else{
                 return null;
             }
-            order.setPrice(good.getPrice()*num+good.getFreight());
+            order.setPrice(goodRepo.calculateSum(g_id,num));
             order.setStartDate(Instant.now());
             order.setBuyerAddress(buy_address);
             order.setSellerAddress(sell_address);
@@ -57,16 +57,12 @@ public class OrderService implements IDGenenrator{
         if(!orderRepo.existsById(o_id)){return false;}
         TradeOrder order= orderRepo.getOne(o_id);
         if(!order.getOrderState().equals("未支付")){return false;}
-        User user=userRepo.getOne(order.getBuyerId());
-        Good good=goodRepo.getOne(order.getGoodId());
-        if(!good.getGoodState().equals("上架中")){return false;}
-        if(order.getNum()<=good.getInventory()){
-            if(user.getBalance()>=order.getPrice()){
+        if(!goodRepo.getGoodState(order.getGoodId()).equals("上架中")){return false;}
+        if(goodRepo.isEnough(order.getGoodId(),order.getNum())>0){
+            if(userRepo.getBalance(order.getBuyerId())>=order.getPrice()){
                 order.setOrderState("待发货");
-                user.setBalance(user.getBalance()-order.getPrice());
-                good.setInventory(good.getInventory()-order.getNum());
-                orderRepo.save(order);
-                userRepo.save(user);
+                userRepo.deleteBalance(order.getBuyerId(),order.getPrice());
+                goodRepo.setInventory(order.getGoodId(), goodRepo.getInventory(order.getGoodId())-order.getNum());
                 orderRepo.save(order);
                 return true;
             }else{
@@ -85,6 +81,26 @@ public class OrderService implements IDGenenrator{
         if(order.getIsRefunding().equals('y')){return;}
         order.setIsRefunding("y");
         orderRepo.save(order);
+    }
+
+    public void setOrderState(String order_id,String newstate){
+        orderRepo.setOrderState(order_id,newstate);
+    }
+
+    public List<TradeOrder> getAllByBuyer(String buyerId){
+        if(userRepo.existsById(buyerId)){
+            return orderRepo.getAllByBuyer(buyerId);
+        }else{
+            return null;
+        }
+    }
+
+    public List<String> getAllBySeller(String sellerId){
+        if(userRepo.existsById(sellerId)){
+            return orderRepo.getAllBySeller(sellerId);
+        }else{
+            return null;
+        }
     }
 
     @Override

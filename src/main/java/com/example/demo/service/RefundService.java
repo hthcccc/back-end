@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -36,4 +37,7 @@ public class RefundService{
         return true;
     }
 
+    public List<Refund> getAllByBuyer(String buyer_id){
+        return refundRepo.getAllByBuyer(buyer_id);
+    }
 }

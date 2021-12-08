@@ -60,4 +60,8 @@ public class Comment {
     public void setId(CommentId id) {
         this.id = id;
     }
+
+    public void setId(String comment_id,Integer level){
+        this.id=new CommentId(comment_id,level);
+    }
 }

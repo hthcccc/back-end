@@ -18,8 +18,15 @@ public class UserService implements IDGenenrator{
 
     public User getById(String ID)
     {
-        Optional<User> t= userRepo.findById(ID);
-        return t.get();
+        if(userRepo.existsById(ID)) {
+            Optional<User> t = userRepo.findById(ID);
+            return t.get();
+        }
+        return null;
+    }
+
+    public Double getBalance(String ID){
+        return userRepo.getBalance(ID);
     }
 
 //    public void addUser(String id,String name)

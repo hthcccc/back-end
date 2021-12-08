@@ -115,6 +115,10 @@ public class GoodService implements IDGenenrator{
         }
     }
 
+    public void setInventory(String g_id,Integer num){
+        goodRepo.setInventory(g_id,num);
+    }
+
     public List<Good> getGoodByName(String name)
     {
         return goodRepo.getGoodByName(name);
@@ -163,12 +167,29 @@ public class GoodService implements IDGenenrator{
         return false;
     }
 
-    public Double getSum(String g_id,int num){
+    public Double calculateSum(String g_id,int num){
         if(goodRepo.existsById(g_id)){
-            Good good=goodRepo.findById(g_id).get();
-            return good.getPrice()*num+good.getFreight();
+            return goodRepo.calculateSum(g_id,num);
         }
         return 0.0;
+    }
+
+    public Integer getInventory(String good_id){
+        if(goodRepo.existsById(good_id)){
+            return goodRepo.getInventory(good_id);
+        }
+        return 0;
+    }
+
+    public boolean isEnough(String good_id,Integer num){
+        if(goodRepo.existsById(good_id)) {
+            if(goodRepo.isEnough(good_id,num)>0){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override

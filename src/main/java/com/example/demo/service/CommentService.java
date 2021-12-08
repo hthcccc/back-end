@@ -35,7 +35,8 @@ public class CommentService implements IDGenenrator{
     public void addComment(String c_id,String u_id,String text){
         if(!commentRepo.existsById(c_id)){return;}
         Comment comment=new Comment();
-        comment.setId(new CommentId(c_id,commentRepo.getCurrentLevel(c_id)));
+        comment.getId().setCommentId(c_id);
+        comment.getId().setLevel(0);
         comment.setUserId(u_id);
         comment.setGoodId(commentRepo.getGoodIdByCommentId(c_id));
         comment.setText(text);

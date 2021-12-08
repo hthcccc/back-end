@@ -17,6 +17,21 @@ public class orderController {
     OrderService tmp;
 
     @Transactional
+    @GetMapping("/getAllByBuyer")
+    @ApiGroup(group = {"order","user"})
+    @ApiOperation(value="得到该用户购买相关的所有订单",notes = "买家id")
+    public List<TradeOrder> getAllByBuyer(String buyerId){
+        return tmp.getAllByBuyer(buyerId);
+    }
+
+    @GetMapping("/getAllBySeller")
+    @ApiGroup(group = {"order","user"})
+    @ApiOperation(value="得到该用户卖出物品的所有订单",notes = "卖家id")
+    public List<String> getAllByseller(String sellerId){
+        return tmp.getAllBySeller(sellerId);
+    }
+
+    @Transactional
     @PostMapping("/generateOrder")
     @ApiGroup(group = {"order"})
     @ApiOperation(value = "生成订单",notes = "买家id，商品id，买家地址，商家地址，购买数量")
@@ -34,6 +49,22 @@ public class orderController {
     @ApiOperation(value = "支付订单",notes = "订单id")
     public boolean payOrder(@RequestParam("order_id") String order_id){
         return tmp.payOrder(order_id);
+    }
+
+    @Transactional
+    @PostMapping("/sendPackage")
+    @ApiGroup(group = {"order"})
+    @ApiOperation(value = "卖家发货",notes = "订单id")
+    public void sendPackage(String order_id){
+        tmp.setOrderState(order_id,"待收货");
+    }
+
+    @Transactional
+    @PostMapping("/ackOrder")
+    @ApiGroup(group = {"order"})
+    @ApiOperation(value = "确认收货",notes = "订单id")
+    public void ackOrder(String order_id){
+        tmp.setOrderState(order_id,"已收货");
     }
 
 }
