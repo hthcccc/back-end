@@ -9,12 +9,21 @@ public class User {
   @Id
   @Column(name = "user_id")
   private String userId;
+  @Column(name = "name")
   private String name;
+  @Column(name = "age")
   private Integer age;
+  @Column(name = "sex")
   private String sex;
+  @Column(name = "mail")
   private String mail;
+  @Column(name = "password")
   private String password;
+  @Column(name = "salt")
+  private String salt;
+  @Column(name = "credit")
   private double credit;
+  @Column(name = "balance")
   private double balance;
 
 
@@ -71,6 +80,13 @@ public class User {
     this.password = password;
   }
 
+  public String getSalt() {
+    return salt;
+  }
+
+  public void setSalt(String salt) {
+    this.salt = salt;
+  }
 
   public double getCredit() {
     return credit;

@@ -7,4 +7,5 @@ public interface ApiGroupInfo {
     String Order="order";
     String Comment="comment";
     String Refund="refund";
+    String Subscribe="subscribe";
 }

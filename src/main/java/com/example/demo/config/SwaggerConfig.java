@@ -64,6 +64,10 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.Refund,"refundApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket subscribeAPI(){
+        return createBean(ApiGroupInfo.Subscribe,"subscribeApi", ApiGroupInfo.VERSION);
+    }
 
 
 

@@ -96,6 +96,7 @@ public class UserService implements IDGenenrator{
         }
     }
 
+
     public void setUserBalance(String id,double balance)
     {
         User user= userRepo.findById(id).get();

@@ -7,9 +7,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 public interface userRepository extends JpaRepository<User,String> {
     @Query("select u.balance from User u where u.userId=?1")
     Double getBalance(String user_id);
+
+    @Query(value = "select * from user where user_id in (select subscribed_id from subscribe where user_id=?)",nativeQuery = true)
+    List<User> getSubscribe(String user_id);
 
     @Transactional
     @Modifying
