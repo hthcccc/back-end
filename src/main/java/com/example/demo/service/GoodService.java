@@ -81,8 +81,8 @@ public class GoodService implements IDGenenrator{
             good.setPrice(prize);
             good.setFreight(freight);
             good.setGoodState("待审核");
-            setUrl(good.getId(),file);
             goodRepo.save(good);
+            setUrl(good.getId(),file);
         }
     }
 
@@ -98,8 +98,8 @@ public class GoodService implements IDGenenrator{
             if(!info.isEmpty()){good.setInfo(info);}
             if(prize>0){good.setPrice(prize);}
             if(freight>=0){good.setFreight(freight);}
-            if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
             goodRepo.save(good);
+            if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
         }
     }
 

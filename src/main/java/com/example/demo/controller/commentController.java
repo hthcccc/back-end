@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-
 import com.example.demo.config.ApiGroup;
+import com.example.demo.model.Comment;
 import com.example.demo.service.CommentService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class commentController {
     @Autowired
     CommentService tmp;
+
+    @GetMapping("/getText")
+    @ApiGroup(group = {"comment"})
+    @ApiOperation(value = "获取评论文字信息",notes = "评论id，层数")
+    public String getText(String comment_id,Integer level){
+        return tmp.getText(comment_id,level);
+    }
+
+    @GetMapping("/getComment")
+    @ApiGroup(group = {"comment"})
+    @ApiOperation(value = "获取评论信息",notes = "评论id，层数")
+    public Comment getComment(String comment_id, Integer level){
+        return tmp.getComment(comment_id,level);
+    }
 
     @PostMapping("/newComment")
     @ApiGroup(group = {"comment"})

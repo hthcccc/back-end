@@ -1,11 +1,13 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.Instant;
 
 @Table(name = "comment")
 @Entity
 public class Comment {
+
     @EmbeddedId
     private CommentId id;
 
