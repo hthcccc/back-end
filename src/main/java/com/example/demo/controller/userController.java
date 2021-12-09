@@ -5,6 +5,7 @@ import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController("user")
@@ -21,17 +22,24 @@ public class userController {
         return tmp.getById(id);
     }
 
-    @GetMapping("/checkPassword/{id,password}")
+    @PostMapping("/checkPasswordById")
     @ApiGroup(group = {"user"})
-    @ApiOperation(value = "校验用户和密码",notes = "用户id，密码")
-    public int checkPassword(@PathVariable String id,@PathVariable String pwd){
-        return tmp.checkPassword(id,pwd);
+    @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
+    public int checkPasswordById(@RequestParam("user_id") String user_id,@RequestParam("pwd") String pwd){
+        return tmp.checkPasswordById(user_id,pwd);
     }
 
-    @GetMapping("/checkPassword/{id}")
+    @PostMapping("/checkPasswordByMAIL")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")
+    public int checkPasswordByMail(@RequestParam("mail") String mail,@RequestParam("pwd") String pwd){
+        return tmp.checkPasswordByMail(mail,pwd);
+    }
+
+    @GetMapping("/getCredit/{id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "查询用户信用评分",notes = "用户id")
-    public double getCredit(String id){
+    public double getCredit(@PathVariable String id){
         return tmp.getCredit(id);
     }
 
@@ -69,10 +77,13 @@ public class userController {
     }
 
 
+    @Transactional
     @PostMapping(value = "/setUserPwd")
     @ApiGroup(group = {"user"})
-    public void setUserPwd(@RequestBody User user1) {
-        tmp.setUserPwd(user1.getUserId(),user1.getPassword());
+    @ApiOperation(value = "设置用户密码",notes = "用户id，新密码")
+    public void setUserPwd(@RequestParam("user_id") String user_id,
+                           @RequestParam("pwd") String pwd) {
+        tmp.setUserPwd(user_id,pwd);
     }
 
     @PostMapping(value = "/setUserBalance")

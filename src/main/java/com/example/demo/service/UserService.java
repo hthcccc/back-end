@@ -3,6 +3,7 @@ package com.example.demo.service;
 
 import com.example.demo.model.User;
 import com.example.demo.repository.userRepository;
+import com.example.demo.utils.Encryption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -85,12 +86,13 @@ public class UserService implements IDGenenrator{
 
     public void setUserPwd(String id,String pwd)
     {
-        User user= userRepo.findById(id).get();
-        if(user!=null)
+        if(userRepo.existsById(id))
         {
+            User user=userRepo.getOne(id);
             if(pwd.length()>=6)
             {
-                user.setPassword(pwd);
+                user.setSalt(Encryption.generateSalt());
+                user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
                 userRepo.save(user);
             }
         }
@@ -122,12 +124,34 @@ public class UserService implements IDGenenrator{
         return false;
     }
 
-    public int checkPassword(String id,String pwd)
+    public int checkPasswordById(String id,String pwd)
     {
         if(userRepo.existsById(id))
         {
-            User user1= userRepo.findById(id).get();
-            if(pwd.equals(user1.getPassword())){
+            User user= userRepo.findById(id).get();
+            String real_pwd=user.getPassword();
+            String en_pwd=Encryption.shiroEncryption(pwd,user.getSalt());
+            if(real_pwd.equals(en_pwd)){
+                System.out.println("密码校验正确");
+            }
+            if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+        else{
+            return 2;
+        }
+    }
+
+    public int checkPasswordByMail(String mail,String pwd)
+    {
+        if(userRepo.existsByMail(mail)>0)
+        {
+            User user= userRepo.getUserByMail(mail);
+            if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
                 return 1;
             }
             else {
@@ -158,7 +182,8 @@ public class UserService implements IDGenenrator{
         user.setUserId(id);
         user.setName(name);
         user.setMail(mail);
-        user.setPassword(pwd);
+        user.setSalt(Encryption.generateSalt());
+        user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
         user.setBalance(999.99);
         userRepo.save(user);
         return id;
