@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController("user")
 @RequestMapping("/user")
 public class userController {
@@ -25,14 +27,14 @@ public class userController {
     @PostMapping("/checkPasswordById")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
-    public int checkPasswordById(@RequestParam("user_id") String user_id,@RequestParam("pwd") String pwd){
+    public Integer checkPasswordById(@RequestParam("user_id") String user_id,@RequestParam("pwd") String pwd){
         return tmp.checkPasswordById(user_id,pwd);
     }
 
-    @PostMapping("/checkPasswordByMAIL")
+    @PostMapping("/checkPasswordByMail")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")
-    public int checkPasswordByMail(@RequestParam("mail") String mail,@RequestParam("pwd") String pwd){
+    public Integer checkPasswordByMail(@RequestParam("mail") String mail,@RequestParam("pwd") String pwd){
         return tmp.checkPasswordByMail(mail,pwd);
     }
 
@@ -118,5 +120,28 @@ public class userController {
         return tmp.deleteUser(user_id);
     }
 
+    @GetMapping("/getAllAddress/{user_id}")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "获取用户的所有地址",notes="用户id")
+    public List<String> getAllAddress(@PathVariable String user_id){
+        return tmp.getAllAddress(user_id);
+    }
 
+    @Transactional
+    @PostMapping("/newAddress")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "新增地址",notes = "用户id，新地址")
+    public void newAddress(@RequestParam("user_id") String user_id,
+                           @RequestParam("address") String address){
+        tmp.newAddress(user_id,address);
+    }
+
+    @Transactional
+    @PostMapping("/removeAddress")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "移除地址",notes = "用户id，新地址")
+    public void removeAddress(@RequestParam("user_id") String user_id,
+                           @RequestParam("address") String address){
+        tmp.removeOneAddress(user_id,address);
+    }
 }

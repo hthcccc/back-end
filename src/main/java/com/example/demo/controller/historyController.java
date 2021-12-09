@@ -5,10 +5,7 @@ import com.example.demo.model.History;
 import com.example.demo.service.HistoryService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +20,20 @@ public class historyController {
     @ApiOperation(value="获取用户浏览历史",notes = "用户id")
     public List<History> getHistory(@PathVariable String userId){
         return tmp.getHistory(userId);
+    }
+
+    @PostMapping("/removeOneHistory")
+    @ApiGroup(group = "history")
+    @ApiOperation(value = "删除用户某条浏览记录",notes="用户id，商品id")
+    public void removeOneHistory(@RequestParam("user_id") String user_id,
+                                 @RequestParam("good_id") String good_id){
+        tmp.removeOneHistory(user_id,good_id);
+    }
+
+    @PostMapping("/removeAllHistory")
+    @ApiGroup(group = "history")
+    @ApiOperation(value = "清空用户浏览记录",notes="用户id")
+    public void removeAllHistory(@RequestParam("user_id") String user_id){
+        tmp.removeAllHistory(user_id);
     }
 }

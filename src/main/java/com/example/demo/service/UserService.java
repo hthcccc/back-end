@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
 
+import com.example.demo.model.Address;
+import com.example.demo.model.AddressId;
 import com.example.demo.model.User;
+import com.example.demo.repository.addressRepository;
 import com.example.demo.repository.userRepository;
 import com.example.demo.utils.Encryption;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -16,6 +20,8 @@ import java.util.Random;
 public class UserService implements IDGenenrator{
     @Autowired
     userRepository userRepo;
+    @Autowired
+    addressRepository addrRepo;
 
     public User getById(String ID)
     {
@@ -124,7 +130,7 @@ public class UserService implements IDGenenrator{
         return false;
     }
 
-    public int checkPasswordById(String id,String pwd)
+    public Integer checkPasswordById(String id,String pwd)
     {
         if(userRepo.existsById(id))
         {
@@ -146,7 +152,7 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public int checkPasswordByMail(String mail,String pwd)
+    public Integer checkPasswordByMail(String mail,String pwd)
     {
         if(userRepo.existsByMail(mail)>0)
         {
@@ -182,11 +188,31 @@ public class UserService implements IDGenenrator{
         user.setUserId(id);
         user.setName(name);
         user.setMail(mail);
+        user.setCredit(5);
         user.setSalt(Encryption.generateSalt());
         user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
         user.setBalance(999.99);
         userRepo.save(user);
         return id;
+    }
+
+    public void newAddress(String user_id,String address){
+        if(!addrRepo.existsById(new AddressId(user_id,address))){
+            addrRepo.save(new Address(user_id,address));
+        }
+    }
+
+    public void removeOneAddress(String user_id,String address){
+        if(addrRepo.existsById(new AddressId(user_id,address))){
+            addrRepo.delete(new Address(user_id,address));
+        }
+    }
+
+    public List<String> getAllAddress(String user_id){
+        if(userRepo.existsById(user_id)){
+            return addrRepo.getAllAddress(user_id);
+        }
+        return null;
     }
 
     @Override
@@ -199,6 +225,7 @@ public class UserService implements IDGenenrator{
         }
         return id;
     }
+
 
     @Override
     public String generateID(int length) {
