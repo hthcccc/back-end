@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Good;
+import com.example.demo.model.History;
+import com.example.demo.model.HistoryId;
 import com.example.demo.model.Part;
 import com.example.demo.repository.goodRepository;
+import com.example.demo.repository.historyRepository;
 import com.example.demo.repository.partRepository;
 import com.example.demo.repository.userRepository;
 import io.minio.*;
@@ -14,6 +17,7 @@ import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,13 +46,47 @@ public class GoodService implements IDGenenrator{
     userRepository userRepo;
     @Autowired
     partRepository partRepo;
+    @Autowired
+    historyRepository historyRepo;
     @Resource
     MinioClient client;
 
     public Good getById(String Id)
     {
-        Optional<Good> t=goodRepo.findById(Id);
-        return t.get();
+        if(goodRepo.existsById(Id)) {
+            Optional<Good> t = goodRepo.findById(Id);
+            return t.get();
+        }
+        return null;
+    }
+
+    public Good browseGood(String user_id,String good_id){
+        if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
+            Good good=goodRepo.findById(good_id).get();
+            //判断是否能查看商品信息
+            if (good.getGoodState().equals("待审核") && !good.getSellerId().equals(user_id)) {
+                return null;
+            }
+
+            //更新浏览历史
+            if(!good.getSellerId().equals(user_id)){
+                if(historyRepo.existsById(user_id,good_id)>0){
+                    History history=historyRepo.getOneHistory(user_id,good_id);
+                    history.setDate(Instant.now());
+                    historyRepo.save(history);
+                }else{
+                    History history=new History();
+                    history.setId(new HistoryId(user_id,good_id));
+                    history.setDate(Instant.now());
+                    historyRepo.save(history);
+                }
+            }
+
+            return good;
+        }else if(goodRepo.existsById(good_id)){//游客模式
+            return goodRepo.getOne(good_id);
+        }
+        return null;
     }
 
     public List<Good> getGoodByUser(String user_id){

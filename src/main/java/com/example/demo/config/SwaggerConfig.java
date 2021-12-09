@@ -69,6 +69,10 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.Subscribe,"subscribeApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket historyAPI(){
+        return createBean(ApiGroupInfo.History,"historyApi", ApiGroupInfo.VERSION);
+    }
 
 
     // 通过注解进行分组

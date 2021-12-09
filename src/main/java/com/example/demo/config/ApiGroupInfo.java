@@ -8,4 +8,5 @@ public interface ApiGroupInfo {
     String Comment="comment";
     String Refund="refund";
     String Subscribe="subscribe";
+    String History="history";
 }

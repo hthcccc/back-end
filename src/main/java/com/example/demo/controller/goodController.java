@@ -27,6 +27,15 @@ public class goodController {
         return tmp.getById(id);
     }
 
+    @Transactional
+    @PostMapping("/browseGood")
+    @ApiGroup(group = {"good","history"})
+    @ApiOperation(value = "查看商品详细信息",notes = "用户id，商品id")
+    public Good browseGood(@RequestParam("user_id") String user_id,
+                           @RequestParam("good_id") String good_id){
+        return tmp.browseGood(user_id,good_id);
+    }
+
     @GetMapping("/getGoodUrl/{id}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "获取商品图片url", notes = "商品id")

@@ -44,36 +44,49 @@ public class userController {
     }
 
 
-    @ApiOperation(value="register",notes="名字，邮箱，密码")
+    @Transactional
     @PostMapping(value = "/register")
     @ApiGroup(group = {"user"})
-    public String register(@RequestBody User user) {
-        return tmp.addUser(user.getName(),user.getMail(),user.getPassword());
+    @ApiOperation(value="注册",notes="用户名字，邮箱，密码")
+    public String register(@RequestParam("name") String name,
+                           @RequestParam("mail") String mail,
+                           @RequestParam("password") String password) {
+        return tmp.addUser(name,mail,password);
     }
 
+    @Transactional
     @PostMapping(value = "/setUserName")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "设置用户名字",notes="用户id，用户新名字")
-    public void setUserName(@RequestBody User user1) {
-        tmp.setUserName(user1.getUserId(),user1.getName());
+    public void setUserName(@RequestParam("user_id") String user_id,
+                            @RequestParam("name") String name){
+        tmp.setUserName(user_id,name);
     }
 
+    @Transactional
     @PostMapping(value = "/setUserAge")
     @ApiGroup(group = {"user"})
-    public void setUserAge(@RequestBody User user1) {
-        tmp.setUserAge(user1.getUserId(),user1.getAge());
+    @ApiOperation(value = "设置用户年龄",notes="用户id，用户年龄")
+    public void setUserAge(@RequestParam("user_id") String user_id,
+                           @RequestParam("age") Integer age) {
+        tmp.setUserAge(user_id,age);
     }
 
     @PostMapping(value = "/setUserSex")
     @ApiGroup(group = {"user"})
-    public void setUserSex(@RequestBody User user1) {
-        tmp.setUserSex(user1.getUserId(),user1.getSex());
+    @ApiOperation(value = "设置用户性别",notes = "用户id，性别")
+    public void setUserSex(@RequestParam("user_id") String user_id,
+                           @RequestParam("sex") String sex) {
+        tmp.setUserSex(user_id,sex);
     }
 
+    @Transactional
     @PostMapping(value = "/setUserMail")
     @ApiGroup(group = {"user"})
-    public void setUserMail(@RequestBody User user1) {
-        tmp.setUserMail(user1.getUserId(),user1.getMail());
+    @ApiOperation(value = "设置用户邮箱",notes = "用户id，邮箱")
+    public void setUserMail(@RequestParam("user_id") String user_id,
+                            @RequestParam("mail") String mail) {
+        tmp.setUserMail(user_id,mail);
     }
 
 
@@ -86,18 +99,23 @@ public class userController {
         tmp.setUserPwd(user_id,pwd);
     }
 
+    @Transactional
     @PostMapping(value = "/setUserBalance")
     @ApiGroup(group = {"user"})
-    public void setUserBalance(@RequestBody User user1) {
-        tmp.setUserBalance(user1.getUserId(),user1.getBalance());
+    @ApiOperation(value = "用户id",notes = "用户id，余额")
+    public void setUserBalance(@RequestParam("user_id") String user_id,
+                               @RequestParam("balance") Integer balance) {
+        tmp.setUserBalance(user_id,balance);
     }
 
 
-    @GetMapping("/deleteUser/{id}")
+    @Transactional
+    @PostMapping("/deleteUser")
     @ApiGroup(group = {"user"})
-    public boolean deleteUser(@PathVariable String id)
+    @ApiOperation(value="注销用户",notes="用户id")//还需要完成后续操作，下架商品，删除订单，删除浏览、收藏、关注
+    public boolean deleteUser(@RequestParam("user_id") String user_id)
     {
-        return tmp.deleteUser(id);
+        return tmp.deleteUser(user_id);
     }
 
 
