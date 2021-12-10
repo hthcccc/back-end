@@ -74,6 +74,10 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.History,"historyApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket favorityAPI(){
+        return createBean(ApiGroupInfo.Favority,"favorityApi", ApiGroupInfo.VERSION);
+    }
 
     // 通过注解进行分组
     private Docket createBean(String groupName,String desc,String version){

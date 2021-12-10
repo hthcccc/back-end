@@ -3,46 +3,62 @@ package com.example.demo.controller;
 import com.example.demo.config.ApiGroup;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
+import com.example.demo.controller.requestBody.*;
 import java.util.List;
 
+@CrossOrigin(origins="*")
 @RestController("user")
 @RequestMapping("/user")
 public class userController {
     @Autowired
     UserService tmp;
 
-    @GetMapping("/getUser/{id}")
+    @GetMapping("/getUser/{user_id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "通过id查询用户",notes="用户id")
-    public User getUser(@PathVariable String id)
+    public User getUser(@PathVariable String user_id)
     {
-        return tmp.getById(id);
+        return tmp.getById(user_id);
     }
+
+//    @PostMapping("/checkPasswordById")
+//    @ApiGroup(group = {"user"})
+//    @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
+//    public Integer checkPasswordById(@RequestParam("user_id") String user_id,@RequestParam("pwd") String pwd){
+//        return tmp.checkPasswordById(user_id,pwd);
+//    }
 
     @PostMapping("/checkPasswordById")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
-    public Integer checkPasswordById(@RequestParam("user_id") String user_id,@RequestParam("pwd") String pwd){
-        return tmp.checkPasswordById(user_id,pwd);
+    public Integer checkPasswordById(@RequestBody checkIDBody body){
+        return tmp.checkPasswordById(body.user_id,body.pwd);
     }
+
+//    @PostMapping("/checkPasswordByMail")
+//    @ApiGroup(group = {"user"})
+//    @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")
+//    public Integer checkPasswordByMail(@RequestParam("mail") String mail,@RequestParam("pwd") String pwd){
+//        return tmp.checkPasswordByMail(mail,pwd);
+//    }
 
     @PostMapping("/checkPasswordByMail")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")
-    public Integer checkPasswordByMail(@RequestParam("mail") String mail,@RequestParam("pwd") String pwd){
-        return tmp.checkPasswordByMail(mail,pwd);
+    public Integer checkPasswordByMail(@RequestBody checkMailBody body){
+        return tmp.checkPasswordByMail(body.mail,body.pwd);
     }
 
-    @GetMapping("/getCredit/{id}")
+    @GetMapping("/getCredit/{user_id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "查询用户信用评分",notes = "用户id")
-    public double getCredit(@PathVariable String id){
-        return tmp.getCredit(id);
+    public double getCredit(@PathVariable String user_id){
+        return tmp.getCredit(user_id);
     }
 
 
@@ -52,8 +68,8 @@ public class userController {
     @ApiOperation(value="注册",notes="用户名字，邮箱，密码")
     public String register(@RequestParam("name") String name,
                            @RequestParam("mail") String mail,
-                           @RequestParam("password") String password) {
-        return tmp.addUser(name,mail,password);
+                           @RequestParam("pwd") String pwd) {
+        return tmp.addUser(name,mail,pwd);
     }
 
     @Transactional
@@ -104,9 +120,9 @@ public class userController {
     @Transactional
     @PostMapping(value = "/setUserBalance")
     @ApiGroup(group = {"user"})
-    @ApiOperation(value = "用户id",notes = "用户id，余额")
+    @ApiOperation(value = "设置用户余额",notes = "用户id，余额")
     public void setUserBalance(@RequestParam("user_id") String user_id,
-                               @RequestParam("balance") Integer balance) {
+                               @RequestParam("balance") double balance) {
         tmp.setUserBalance(user_id,balance);
     }
 

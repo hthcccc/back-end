@@ -9,4 +9,5 @@ public interface ApiGroupInfo {
     String Refund="refund";
     String Subscribe="subscribe";
     String History="history";
+    String Favority="favority";
 }

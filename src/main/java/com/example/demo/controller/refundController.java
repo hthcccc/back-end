@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins="*")
 @RestController("refund")
 @RequestMapping("/refund")
 public class refundController {
@@ -18,11 +19,11 @@ public class refundController {
     RefundService tmp;
 
     @Transactional
-    @GetMapping("/getAllbyBuyer")
+    @GetMapping("/getAllByBuyer/{user_id}")
     @ApiGroup(group = {"refund","user"})
     @ApiOperation(value = "获取该用户提交的所以退款申请",notes = "用户id")
-    public List<Refund> getAllbyBuyer(String buyer_id) {
-        return tmp.getAllByBuyer(buyer_id);
+    public List<Refund> getAllByBuyer(@PathVariable String user_id) {
+        return tmp.getAllByBuyer(user_id);
     }
 
     @Transactional

@@ -29,7 +29,7 @@ public class SubscribeService {
     public void addSubscribe(String user_id,String subscribed_id){
         if(userRepo.existsById(user_id)&&userRepo.existsById(subscribed_id)){
             if(subscribed_id.equals(user_id)){return;}
-            if(subRepo.hasSubscribed(user_id,subscribed_id)==0) {
+            if(!subRepo.existsById(new SubscribeId(user_id,subscribed_id))) {
                 SubscribeId id = new SubscribeId();
                 id.setUserId(user_id);
                 id.setSubscribedId(subscribed_id);

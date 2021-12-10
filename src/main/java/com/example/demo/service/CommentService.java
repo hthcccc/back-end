@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.resultBody.*;
 import com.example.demo.model.Comment;
 import com.example.demo.model.CommentId;
 import com.example.demo.repository.commentRepository;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -58,7 +61,34 @@ public class CommentService implements IDGenenrator{
 //        commentRepo.newComment(c_id,u_id,commentRepo.getGoodIdByCommentId(c_id),
 //                text,Instant.now(),commentRepo.getCurrentLevel(c_id)+1);
         commentRepo.save(comment);
-        System.out.println("回复成功");
+    }
+
+    public List<commentListBody> getAllByGood(String good_id){
+        if(goodRepo.existsById(good_id)) {
+            List<Comment> commentList = commentRepo.getAllbyGood(good_id);
+            List<commentListBody> result = new ArrayList<commentListBody>();
+            for (Comment c : commentList) {
+                commentListBody element = new commentListBody(c.getId().getCommentId(),
+                        userRepo.getName(c.getUserId()), c.getText(), c.getDate());
+                result.add(element);
+            }
+            return result;
+        }
+        return null;
+    }
+
+    public List<commentListBody> listAllBelow(String comment_id){
+        if(commentRepo.ifExistsByCommentID(comment_id)==1){
+            List<commentListBody> result=new ArrayList<commentListBody>();
+            List<Comment> commentList = commentRepo.getAllBehind(comment_id);
+            for(Comment c:commentList){
+                result.add(new commentListBody(comment_id,
+                        userRepo.getName(c.getUserId()),
+                        c.getText(),c.getDate()));
+            }
+            return result;
+        }
+        return null;
     }
 
     @Override

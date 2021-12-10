@@ -16,11 +16,11 @@ public interface orderRepository extends JpaRepository<TradeOrder,String> {
     void setOrderState(String order_id,String newstate);
 
     @Transactional
-    @Query("select t from TradeOrder t where t.buyerId=?1 order by t.startDate")
+    @Query("select t from TradeOrder t where t.buyerId=?1 order by t.startDate desc")
     List<TradeOrder> getAllByBuyer(String buyerId);
 
     @Transactional
-    @Query(value = "select trade_order.* from trade_order join good where trade_order.good_id=good.good_id and seller_id='hth' order by start_date desc;",nativeQuery = true)
+    @Query(value = "select trade_order.* from trade_order join good where trade_order.good_id=good.good_id and seller_id=?1 order by start_date desc;",nativeQuery = true)
     List<String> getAllBySeller(String sellerId);
 
 }

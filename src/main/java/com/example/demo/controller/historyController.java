@@ -9,17 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins="*")
 @RestController("history")
 @RequestMapping("/history")
 public class historyController {
     @Autowired
     HistoryService tmp;
 
-    @GetMapping("/getHistory/{userId}")
+    @GetMapping("/getHistory/{user_id}")
     @ApiGroup(group = {"history"})
     @ApiOperation(value="获取用户浏览历史",notes = "用户id")
-    public List<History> getHistory(@PathVariable String userId){
-        return tmp.getHistory(userId);
+    public List<History> getHistory(@PathVariable String user_id){
+        return tmp.getHistory(user_id);
     }
 
     @PostMapping("/removeOneHistory")

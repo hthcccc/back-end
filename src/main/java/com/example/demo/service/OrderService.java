@@ -31,11 +31,14 @@ public class OrderService implements IDGenenrator{
     public String generateOrder(String u_id,String g_id,String buy_address,
                                 String sell_address,Integer num) {
         if(userRepo.existsById(u_id)&&goodRepo.existsById(g_id)) {
+            //卖家不能购买自己发布的商品
+            if(goodRepo.findById(g_id).get().getSellerId().equals(u_id)){ return null;}
             TradeOrder order = new TradeOrder();
             String id = generateID(16);
             order.setId(id);
             order.setBuyerId(u_id);
             order.setGoodId(g_id);
+            //判断库存
             if(goodRepo.isEnough(g_id,num)>0){
                 order.setNum(num);
             }else{
@@ -71,6 +74,22 @@ public class OrderService implements IDGenenrator{
         }
         else{
             return false;
+        }
+    }
+
+    public void ackOrder(String order_id){
+        if(orderRepo.existsById(order_id)){
+            if(orderRepo.findById(order_id).get().getOrderState().equals("待收货")){
+                setOrderState(order_id,"已收货");
+            }
+        }
+    }
+
+    public void sendPackage(String order_id){
+        if(orderRepo.existsById(order_id)){
+            if(orderRepo.findById(order_id).get().getOrderState().equals("待发货")){
+                setOrderState(order_id,"待收货");
+            }
         }
     }
 

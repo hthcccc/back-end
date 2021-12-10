@@ -16,6 +16,13 @@ public class SubscribeId implements Serializable {
     @Column(name = "subscribed_id", nullable = false, length = 16)
     private String subscribedId;
 
+    public SubscribeId(){};
+
+    public SubscribeId(String userId,String subscribedId){
+        this.userId=userId;
+        this.subscribedId=subscribedId;
+    }
+
     public String getSubscribedId() {
         return subscribedId;
     }

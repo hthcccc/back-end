@@ -9,17 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins="*")
 @RestController("subscribe")
 @RequestMapping("/subscribe")
 public class subscribeController {
     @Autowired
     SubscribeService tmp;
 
-    @GetMapping("/getSubscribe/{id}")
+    @GetMapping("/getSubscribe/{user_id}")
     @ApiGroup(group = {"subscribe","user"})
     @ApiOperation(value = "获取用户关注列表",notes = "用户id")
-    public List<User> getSubscribe(@PathVariable String id){
-        return tmp.getSubscribe(id);
+    public List<User> getSubscribe(@PathVariable String user_id){
+        return tmp.getSubscribe(user_id);
     }
 
     @PostMapping("/addSubscribe")
