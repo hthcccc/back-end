@@ -68,10 +68,18 @@ public class goodController {
 
     @GetMapping("/getGoodOnShellByName/{name}")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value="按商品名字获取所有上架中的商品")
+    @ApiOperation(value="按商品名字获取所有上架中的商品",notes = "商品名字")
     public List<Good> getGoodOnShellByName(@PathVariable String name)
     {
-        return tmp.getGoodByName(name);
+        return tmp.getGoodOnShellByName(name);
+    }
+
+    @GetMapping("/getGoodOnShellByPart/{part}")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value="按照分区获取所有上架中的商品",notes = "分区名")
+    public List<Good> getGoodOnShellByPart(@PathVariable String part)
+    {
+        return tmp.getGoodOnShellByPart(part);
     }
 
     @GetMapping("/calculateSum")
@@ -138,5 +146,12 @@ public class goodController {
                             @RequestParam("freight") Double freight,
                             @RequestParam(value = "file",required = false) MultipartFile file){
         tmp.releaseGood(user_id,name,part,inventory,info,price,freight,file);
+    }
+
+    @PostMapping("/allowGoodForSale")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value = "批准商品上架",notes = "商品id")
+    public void allowGoodForSale(@RequestParam("good_id") String good_id){
+        tmp.allowGood(good_id);
     }
 }

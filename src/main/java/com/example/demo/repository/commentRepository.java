@@ -38,6 +38,15 @@ public interface commentRepository extends JpaRepository<Comment, CommentId> {
     @Query("select c from Comment c,Good g where g.id=c.goodId and c.goodId=?1 and c.id.level=0 order by c.date desc")
     List<Comment> getAllbyGood(String good_id);
 
+    @Transactional
+    @Modifying()
+    @Query(value = "update comment set level=level-1 where comment_id =?1 and level>?2",nativeQuery = true)
+    void retrieveLevel(String comment_id,Integer level);
+
+    @Transactional
+    @Modifying
+    @Query("delete from Comment c where c.id.commentId=?1")
+    void removeComment(String comment_id);
 
 //    @Transactional
 //    @Modifying

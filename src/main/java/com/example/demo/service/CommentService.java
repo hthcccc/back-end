@@ -91,6 +91,17 @@ public class CommentService implements IDGenenrator{
         return null;
     }
 
+    public void deleteComment(String comment_id,Integer level){
+        if(commentRepo.existsById(new CommentId(comment_id,level))){
+            if(level>0) {
+                commentRepo.delete(commentRepo.findById(new CommentId(comment_id, level)).get());
+                commentRepo.retrieveLevel(comment_id, level);
+            }else{
+                commentRepo.removeComment(comment_id);
+            }
+        }
+    }
+
     @Override
     public StringBuilder tryGetID(int length) {
         StringBuilder id=new StringBuilder();

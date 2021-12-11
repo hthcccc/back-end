@@ -4,7 +4,6 @@ import com.example.demo.model.Good;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -17,6 +16,10 @@ public interface goodRepository  extends JpaRepository<Good,String> {
     @Transactional//开启事务
     @Query("select t from Good t where t.name=?1 and t.goodState='上架中'")
     List<Good> getGoodByName(String name);
+
+    @Transactional//开启事务
+    @Query("select t from Good t where t.part=?1 and t.goodState='上架中'")
+    List<Good> getGoodByPart(String part);
 
     @Transactional
     @Query("select g.inventory from Good g where g.id=?1")
@@ -38,7 +41,8 @@ public interface goodRepository  extends JpaRepository<Good,String> {
     void setInventory(String good_id,Integer num);
 
     @Transactional
+    @Modifying
     @Query("update Good g set g.goodState=?2 where g.id=?1")
-    void setState(String good_id,String newstate);
+    void setState(String good_id,String state);
 
 }

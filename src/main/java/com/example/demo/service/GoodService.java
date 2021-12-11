@@ -90,8 +90,17 @@ public class GoodService implements IDGenenrator{
     }
 
     public List<Good> getGoodByUser(String user_id){
-        //goodRepo
-        return goodRepo.getGoodByUser(user_id);
+        if(userRepo.existsById(user_id)) {
+            return goodRepo.getGoodByUser(user_id);
+        }
+        return null;
+    }
+
+    public List<Good> getGoodOnShellByPart(String part){
+        if(partRepo.existsById(part)){
+            return goodRepo.getGoodByPart(part);
+        }
+        return null;
     }
 
     public List<String> getAllPart() {
@@ -157,7 +166,7 @@ public class GoodService implements IDGenenrator{
         goodRepo.setInventory(g_id,num);
     }
 
-    public List<Good> getGoodByName(String name)
+    public List<Good> getGoodOnShellByName(String name)
     {
         return goodRepo.getGoodByName(name);
     }
@@ -228,6 +237,14 @@ public class GoodService implements IDGenenrator{
             }
         }
         return false;
+    }
+
+    public void allowGood(String good_id){
+        if(goodRepo.existsById(good_id)){
+            if(goodRepo.findById(good_id).get().getGoodState().equals("待审核")){
+                goodRepo.setState(good_id,"上架中");
+            }
+        }
     }
 
     @Override

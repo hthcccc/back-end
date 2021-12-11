@@ -52,6 +52,14 @@ public class commentController {
         tmp.addComment(comment_id,user_id,text);
     }
 
+    @PostMapping("/deleteComment")
+    @ApiGroup(group = {"comment"})
+    @ApiOperation(value = "删除评论",notes = "评论id，层数")
+    public void deleteComment(@RequestParam("comment_id") String comment_id,
+                             @RequestParam("level") Integer level){
+        tmp.deleteComment(comment_id,level);
+    }
+
     @GetMapping("/getAllByGood/{good_id}")
     @ApiGroup(group = {"good","comment"})
     @ApiOperation(value = "获取商品的所有评论（第一层）",notes = "商品id")
