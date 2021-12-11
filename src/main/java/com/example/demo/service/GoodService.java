@@ -10,6 +10,7 @@ import com.example.demo.repository.partRepository;
 import com.example.demo.repository.userRepository;
 import io.minio.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,6 +100,17 @@ public class GoodService implements IDGenenrator{
     public List<Good> getGoodOnShellByPart(String part){
         if(partRepo.existsById(part)){
             return goodRepo.getGoodByPart(part);
+        }
+        return null;
+    }
+
+    public Page<Good> getGoodPagedOnShellByPart(String part,Integer page){
+        if(partRepo.existsById(part)){
+            //Sort sort=new Sort(Sort.Direction.ASC,"good_id");
+            //return goodRepo.findAll();
+            Pageable pageable=PageRequest.of(page,5,Sort.Direction.DESC,"id");
+            //return goodRepo.getGoodPagedByPart(part);
+            return goodRepo.getGoodPagedByPart(pageable,part);
         }
         return null;
     }

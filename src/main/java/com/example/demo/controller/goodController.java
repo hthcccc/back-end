@@ -5,6 +5,7 @@ import com.example.demo.model.Good;
 import com.example.demo.service.GoodService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,6 +81,14 @@ public class goodController {
     public List<Good> getGoodOnShellByPart(@PathVariable String part)
     {
         return tmp.getGoodOnShellByPart(part);
+    }
+
+    @GetMapping("/getGoodPagedByPart")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value="按照分区,分页获取所有上架中的商品",notes = "分区名，页面index")
+    public Page<Good> getGoodPagedByPart(String part,Integer page)
+    {
+        return tmp.getGoodPagedOnShellByPart(part,page);
     }
 
     @GetMapping("/calculateSum")

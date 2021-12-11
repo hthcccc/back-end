@@ -1,14 +1,17 @@
 package com.example.demo.repository;
 
 import com.example.demo.model.Good;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface goodRepository  extends JpaRepository<Good,String> {
+public interface goodRepository  extends JpaRepository<Good,String>, JpaSpecificationExecutor<Good> {
     @Transactional//开启事务
     @Query("select t from Good t where t.sellerId=?1")
     List<Good> getGoodByUser(String u_id);
@@ -20,6 +23,9 @@ public interface goodRepository  extends JpaRepository<Good,String> {
     @Transactional//开启事务
     @Query("select t from Good t where t.part=?1 and t.goodState='上架中'")
     List<Good> getGoodByPart(String part);
+
+    @Query("select t from Good t where t.part=?1 and t.goodState='上架中'")
+    Page<Good> getGoodPagedByPart(Pageable pageable, String part);
 
     @Transactional
     @Query("select g.inventory from Good g where g.id=?1")
