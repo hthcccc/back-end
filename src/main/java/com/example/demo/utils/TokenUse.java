@@ -19,11 +19,11 @@ public class TokenUse {
     /**
      * 生成token，用户退出后消失
      *
-     * @param userCode
      * @param user_id
+     * @param pwd
      * @return
      */
-    public static String sign(String userCode, String user_id) {
+    public static String sign(String user_id,String pwd) {
         try {
             //设置过期时间
             Date date = new Date(System.currentTimeMillis() + overdueTime);
@@ -37,8 +37,8 @@ public class TokenUse {
 
             //返回带有用户信息的签名
             return JWT.create().withHeader(requestHender)
-                    .withClaim("userCode", userCode)
                     .withClaim("user_id", user_id)
+                    .withClaim("pwd", pwd)
                     .withClaim("Time", date1)
                     .withExpiresAt(date)
                     .sign(algorithm);

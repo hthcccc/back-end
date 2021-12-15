@@ -40,6 +40,19 @@ public class userController {
         return tmp.checkPasswordById(body.user_id,body.pwd);
     }
 
+    @PostMapping("/loginByToken")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "利用token校验用户id和密码，并返回token",notes = "用户id，密码")
+    public String loginByToken(@RequestBody String token){
+        return tmp.checkPasswordByToken(token);
+    }
+
+    @PostMapping("/loginById")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "通过用户id和密码校验，并返回token",notes = "用户id，密码")
+    public String loginById(@RequestBody checkIDBody body){
+        return tmp.checkPassword(body.user_id,body.pwd);
+    }
 //    @PostMapping("/checkPasswordByMail")
 //    @ApiGroup(group = {"user"})
 //    @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")

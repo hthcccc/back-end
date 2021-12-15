@@ -1,15 +1,19 @@
 package com.example.demo.service;
 
 
+import com.auth0.jwt.JWT;
 import com.example.demo.model.Address;
 import com.example.demo.model.AddressId;
 import com.example.demo.model.User;
 import com.example.demo.repository.addressRepository;
 import com.example.demo.repository.userRepository;
 import com.example.demo.utils.Encryption;
+import com.example.demo.utils.TokenUse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
@@ -152,6 +156,43 @@ public class UserService implements IDGenenrator{
         }
     }
 
+    public String checkPassword(String user_id,String pwd){
+        if(checkPasswordById(user_id,pwd)==1){
+            System.out.println("登录成功");
+            String token= TokenUse.sign(user_id,pwd);
+            if(token!=null){
+                return token;
+            }
+        }
+        return null;
+    }
+
+    public String checkPasswordByToken(String token){
+        if(TokenUse.tokenVerify(token)) {
+            String user_id = JWT.decode(token).getClaim("user_id").asString();
+            String pwd = JWT.decode(token).getClaim("pwd").asString();
+            if (checkPasswordById(user_id, pwd) == 1) {
+                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
+                if (token != null) {
+                    return newtoken;
+                }
+            }
+            return null;
+        }else{
+            String user_id = JWT.decode(token).getClaim("user_id").asString();
+            String pwd = JWT.decode(token).getClaim("pwd").asString();
+            if (checkPasswordById(user_id, pwd) == 1) {
+                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
+                if (token != null) {
+                    return newtoken;
+                }
+            }else{
+                return null;
+            }
+        }
+        return null;
+    }
+
     public Integer checkPasswordByMail(String mail,String pwd)
     {
         if(userRepo.existsByMail(mail)>0)
@@ -213,6 +254,13 @@ public class UserService implements IDGenenrator{
             return addrRepo.getAllAddress(user_id);
         }
         return null;
+    }
+
+    public Integer ifExistsMail(String mail){
+        if(userRepo.existsByMail(mail)){
+            return 1;
+        }
+        return 0;
     }
 
     @Override
