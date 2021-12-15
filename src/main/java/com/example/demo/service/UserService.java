@@ -257,7 +257,7 @@ public class UserService implements IDGenenrator{
     }
 
     public Integer ifExistsMail(String mail){
-        if(userRepo.existsByMail(mail)){
+        if(userRepo.existsByMail(mail)>0){
             return 1;
         }
         return 0;
