@@ -10,4 +10,5 @@ public interface ApiGroupInfo {
     String Subscribe="subscribe";
     String History="history";
     String Favority="favority";
+    String Notice="notice";
 }

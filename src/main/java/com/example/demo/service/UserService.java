@@ -1,12 +1,13 @@
 package com.example.demo.service;
 
-
+import com.example.demo.result.*;
 import com.auth0.jwt.JWT;
 import com.example.demo.model.Address;
 import com.example.demo.model.AddressId;
 import com.example.demo.model.User;
 import com.example.demo.repository.addressRepository;
 import com.example.demo.repository.userRepository;
+import com.example.demo.result.ResultFactory;
 import com.example.demo.utils.Encryption;
 import com.example.demo.utils.TokenUse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class UserService implements IDGenenrator{
@@ -27,13 +26,15 @@ public class UserService implements IDGenenrator{
     @Autowired
     addressRepository addrRepo;
 
-    public User getById(String ID)
+    public Result getById(String ID)
     {
         if(userRepo.existsById(ID)) {
-            Optional<User> t = userRepo.findById(ID);
-            return t.get();
+            User user = userRepo.findById(ID).get();
+            user.setSalt("");
+            user.setPassword("");
+            return ResultFactory.buildSuccessResult(user);
         }
-        return null;
+        return ResultFactory.buildFailResult("no student exists by id="+ID);
     }
 
     public Double getBalance(String ID){
@@ -122,16 +123,16 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public boolean deleteUser(String id)
+    public Result deleteUser(String id)
     {
         if(userRepo.existsById(id))
         {
             User user1= userRepo.findById(id).get();
             userRepo.delete(user1);
-            return true;
+            return ResultFactory.buildResult(200,"delete this user successfully",null);
         }
 
-        return false;
+        return ResultFactory.buildFailResult("no user exists by this id");
     }
 
     public Integer checkPasswordById(String id,String pwd)
@@ -210,20 +211,23 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public double getCredit(String id)
+    public Result getCredit(String id)
     {
         if(userRepo.existsById(id))
         {
             User user= userRepo.findById(id).get();
             double credit=user.getCredit();
-            return new BigDecimal(credit).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            credit= new BigDecimal(credit).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            Map<String,Double> result=new HashMap<>();
+            result.put("credit",credit);
+            return ResultFactory.buildSuccessResult(result);
         }
         else{
-            return 0.0;
+            return ResultFactory.buildFailResult("no user exists by this id");
         }
     }
 
-    public String addUser(String name,String mail,String pwd){
+    public Result addUser(String name,String mail,String pwd){
         User user=new User();
         String id=generateID(16);
         user.setUserId(id);
@@ -234,7 +238,7 @@ public class UserService implements IDGenenrator{
         user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
         user.setBalance(999.99);
         userRepo.save(user);
-        return id;
+        return ResultFactory.buildSuccessResult(id);
     }
 
     public void newAddress(String user_id,String address){
@@ -249,11 +253,11 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public List<String> getAllAddress(String user_id){
+    public Result getAllAddress(String user_id){
         if(userRepo.existsById(user_id)){
-            return addrRepo.getAllAddress(user_id);
+            return ResultFactory.buildSuccessResult(addrRepo.getAllAddress(user_id));
         }
-        return null;
+        return ResultFactory.buildFailResult("no user exists by this id");
     }
 
     public Integer ifExistsMail(String mail){

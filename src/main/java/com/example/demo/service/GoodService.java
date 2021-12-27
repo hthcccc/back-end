@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.controller.resultBody.*;
 import com.example.demo.model.Good;
 import com.example.demo.model.History;
 import com.example.demo.model.HistoryId;
@@ -8,6 +9,8 @@ import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.historyRepository;
 import com.example.demo.repository.partRepository;
 import com.example.demo.repository.userRepository;
+import com.example.demo.result.*;
+import com.example.demo.result.Result;
 import io.minio.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -23,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
+import java.util.concurrent.TimeUnit;
 
 
 enum goodstate{
@@ -52,80 +55,78 @@ public class GoodService implements IDGenenrator{
     @Resource
     MinioClient client;
 
-    public Good getById(String Id)
+    public Result getById(String Id)
     {
         if(goodRepo.existsById(Id)) {
-            Optional<Good> t = goodRepo.findById(Id);
-            return t.get();
+            Good good = goodRepo.findById(Id).get();
+            return ResultFactory.buildSuccessResult(good);
         }
-        return null;
+        return ResultFactory.buildFailResult("该商品不存在");
     }
 
-    public Good browseGood(String user_id,String good_id){
+    public Result browseGood(String user_id, String good_id){
         if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
             Good good=goodRepo.findById(good_id).get();
             //判断是否能查看商品信息
             if (good.getGoodState().equals("待审核") && !good.getSellerId().equals(user_id)) {
-                return null;
+                return ResultFactory.buildResult(200,"该商品还未上架",null);
             }
-
             //更新浏览历史
             if(!good.getSellerId().equals(user_id)){
                 if(historyRepo.existsById(user_id,good_id)>0){
                     History history=historyRepo.getOneHistory(user_id,good_id);
-                    history.setDate(Instant.now());
+                    history.setDate(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
                     historyRepo.save(history);
                 }else{
                     History history=new History();
                     history.setId(new HistoryId(user_id,good_id));
-                    history.setDate(Instant.now());
+                    history.setDate(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
                     historyRepo.save(history);
                 }
             }
-
-            return good;
+            return ResultFactory.buildSuccessResult(good);
         }else if(goodRepo.existsById(good_id)){//游客模式
-            return goodRepo.getOne(good_id);
+            return ResultFactory.buildResult(200,"游客模式",goodRepo.findById(good_id).get());
         }
-        return null;
+        return ResultFactory.buildFailResult("该商品不存在");
     }
 
-    public List<Good> getGoodByUser(String user_id){
+    public Result getGoodByUser(String user_id){
         if(userRepo.existsById(user_id)) {
-            return goodRepo.getGoodByUser(user_id);
+            return ResultFactory.buildSuccessResult(goodRepo.getGoodByUser(user_id));
         }
-        return null;
+        return ResultFactory.buildFailResult("该用户不存在");
     }
 
-    public List<Good> getGoodOnShellByPart(String part){
+    public Result getGoodOnShellByPart(String part){
         if(partRepo.existsById(part)){
-            return goodRepo.getGoodByPart(part);
+            return ResultFactory.buildSuccessResult(goodRepo.getGoodByPart(part));
         }
-        return null;
+        return ResultFactory.buildFailResult("不存在该分区");
     }
 
-    public Page<Good> getGoodPagedOnShellByPart(String part,Integer page){
+    public Result getGoodPagedOnShellByPart(String part,Integer page){
         if(partRepo.existsById(part)){
             //Sort sort=new Sort(Sort.Direction.ASC,"good_id");
             //return goodRepo.findAll();
             Pageable pageable=PageRequest.of(page,5,Sort.Direction.DESC,"id");
             //return goodRepo.getGoodPagedByPart(part);
-            return goodRepo.getGoodPagedByPart(pageable,part);
+            return ResultFactory.buildSuccessResult(goodRepo.getGoodPagedByPart(pageable,part));
         }
-        return null;
+        return ResultFactory.buildFailResult("不存在该分区");
     }
 
-    public List<String> getAllPart() {
+    public Result getAllPart() {
         List<Part> partList=partRepo.findAll();
         List<String> result = new ArrayList<String>();
         for(Part p : partList){
             result.add(p.getPart());
         }
-        return result;
+        return ResultFactory.buildSuccessResult(result);
         //return partlist;
     }
 
-    public void releaseGood(String u_id,String name,
+    public Result releaseGood(String u_id,String name,
                             String part,Integer inventory,
                         String info,Double prize,Double freight,MultipartFile file)
     {
@@ -142,12 +143,14 @@ public class GoodService implements IDGenenrator{
             good.setGoodState("待审核");
             goodRepo.save(good);
             setUrl(good.getId(),file);
+            return ResultFactory.buildResult(200,"发布成功",null);
         }
+        return ResultFactory.buildFailResult("不存在该商品");
     }
 
-    public void setGood(String g_id,String name,
-                            String part,Integer inventory,
-                            String info,Double prize,Double freight,MultipartFile file)
+    public Result setGood(String g_id, String name,
+                                   String part, Integer inventory,
+                                   String info, Double prize, Double freight, MultipartFile file)
     {
         if(goodRepo.existsById(g_id)) {
             Good good=goodRepo.findById(g_id).get();
@@ -159,7 +162,9 @@ public class GoodService implements IDGenenrator{
             if(freight>=0){good.setFreight(freight);}
             goodRepo.save(good);
             if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
+            return ResultFactory.buildResult(200,"修改商品成功",null);
         }
+        return ResultFactory.buildFailResult("不存在该商品");
     }
 
     public void setGoodState(String g_id,String newState)
@@ -178,9 +183,9 @@ public class GoodService implements IDGenenrator{
         goodRepo.setInventory(g_id,num);
     }
 
-    public List<Good> getGoodOnShellByName(String name)
+    public Result getGoodOnShellByName(String name)
     {
-        return goodRepo.getGoodByName(name);
+        return ResultFactory.buildSuccessResult(goodRepo.getGoodByName(name));
     }
 
     public String getUrl(String g_id)
@@ -193,7 +198,8 @@ public class GoodService implements IDGenenrator{
         }
     }
 
-    public boolean setUrl(String g_id,MultipartFile file){
+
+    public Result setUrl(String g_id, MultipartFile file){
         if(goodRepo.existsById(g_id)){
             try {
                 Good good= goodRepo.findById(g_id).get();
@@ -216,21 +222,21 @@ public class GoodService implements IDGenenrator{
 
                     good.setUrl(url + file.getOriginalFilename());
                     goodRepo.save(good);
-                    return true;
+                    return ResultFactory.buildSuccessResult(null);
                 }
             } catch (Exception e) {
                 System.out.println("上传失败");
-                return false;
+                return ResultFactory.buildFailResult("图片上传失败");
             }
         }
-        return false;
+        return ResultFactory.buildFailResult("该商品不存在");
     }
 
-    public Double calculateSum(String g_id,int num){
+    public Result calculateSum(String g_id, int num){
         if(goodRepo.existsById(g_id)){
-            return goodRepo.calculateSum(g_id,num);
+            return ResultFactory.buildSuccessResult(goodRepo.calculateSum(g_id,num));
         }
-        return 0.0;
+        return ResultFactory.buildFailResult("不存在该商品");
     }
 
     public Integer getInventory(String good_id){
@@ -251,12 +257,28 @@ public class GoodService implements IDGenenrator{
         return false;
     }
 
-    public void allowGood(String good_id){
+    public Result allowGood(String good_id){
         if(goodRepo.existsById(good_id)){
             if(goodRepo.findById(good_id).get().getGoodState().equals("待审核")){
                 goodRepo.setState(good_id,"上架中");
+                return ResultFactory.buildResult(200,"批准上架",null);
             }
         }
+        return ResultFactory.buildFailResult("不存在该商品");
+    }
+
+    public Result getTop10(){
+        List<Good> goodList=goodRepo.getTop10();
+        return ResultFactory.buildSuccessResult(goodList);
+    }
+
+    public Result getGoodsByIds(List<String> idList){
+        List<Good> result=new ArrayList<Good>();
+        for(String id: idList){
+            Good good=goodRepo.findById(id).get();
+            result.add(good);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     @Override

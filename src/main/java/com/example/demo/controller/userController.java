@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ApiGroup;
 import com.example.demo.model.User;
+import com.example.demo.result.Result;
 import com.example.demo.service.UserService;
+import com.example.demo.result.*;
 import com.example.demo.utils.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +23,7 @@ public class userController {
     @GetMapping("/getUser/{user_id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "通过id查询用户",notes="用户id")
-    public User getUser(@PathVariable String user_id)
+    public Result getUser(@PathVariable String user_id)
     {
         return tmp.getById(user_id);
     }
@@ -70,7 +72,7 @@ public class userController {
     @GetMapping("/getCredit/{user_id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "查询用户信用评分",notes = "用户id")
-    public double getCredit(@PathVariable String user_id){
+    public Result getCredit(@PathVariable String user_id){
         return tmp.getCredit(user_id);
     }
 
@@ -79,7 +81,7 @@ public class userController {
     @PostMapping(value = "/register")
     @ApiGroup(group = {"user"})
     @ApiOperation(value="注册",notes="用户名字，邮箱，密码")
-    public String register(@RequestParam("name") String name,
+    public Result register(@RequestParam("name") String name,
                            @RequestParam("mail") String mail,
                            @RequestParam("pwd") String pwd) {
         return tmp.addUser(name,mail,pwd);
@@ -144,7 +146,7 @@ public class userController {
     @PostMapping("/deleteUser")
     @ApiGroup(group = {"user"})
     @ApiOperation(value="注销用户",notes="用户id")//还需要完成后续操作，下架商品，删除订单，删除浏览、收藏、关注
-    public boolean deleteUser(@RequestParam("user_id") String user_id)
+    public Result deleteUser(@RequestParam("user_id") String user_id)
     {
         return tmp.deleteUser(user_id);
     }
@@ -152,7 +154,7 @@ public class userController {
     @GetMapping("/getAllAddress/{user_id}")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "获取用户的所有地址",notes="用户id")
-    public List<String> getAllAddress(@PathVariable String user_id){
+    public Result getAllAddress(@PathVariable String user_id){
         return tmp.getAllAddress(user_id);
     }
 

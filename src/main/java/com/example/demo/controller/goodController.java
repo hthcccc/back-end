@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.demo.result.*;
 
 import java.util.List;
 
@@ -22,16 +23,23 @@ public class goodController {
     @GetMapping("/getGood/{good_id}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "按照id获取商品",notes = "商品id")
-    public Good getGood(@PathVariable String good_id)
+    public Result getGood(@PathVariable String good_id)
     {
         return tmp.getById(good_id);
+    }
+
+    @GetMapping("/getTop10")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value = "获取Top10商品")
+    public Result getTop10() {
+        return tmp.getTop10();
     }
 
     @Transactional
     @PostMapping("/browseGood")
     @ApiGroup(group = {"good","history"})
     @ApiOperation(value = "查看商品详细信息",notes = "用户id，商品id")
-    public Good browseGood(@RequestParam("user_id") String user_id,
+    public Result browseGood(@RequestParam("user_id") String user_id,
                            @RequestParam("good_id") String good_id){
         return tmp.browseGood(user_id,good_id);
     }
@@ -47,7 +55,7 @@ public class goodController {
     @GetMapping("/getGoodPart/")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "获取所有商品分区")
-    public List<String> getGoodPart()
+    public Result getGoodPart()
     {
         return tmp.getAllPart();
     }
@@ -55,7 +63,7 @@ public class goodController {
     @GetMapping("/getGoodByUser/{user_id}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value="获取某个用户的所有商品",notes = "用户id")
-    public List<Good> getGoodByUser(@PathVariable String user_id)
+    public Result getGoodByUser(@PathVariable String user_id)
     {
         return tmp.getGoodByUser(user_id);
     }
@@ -70,7 +78,7 @@ public class goodController {
     @GetMapping("/getGoodOnShellByName/{name}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value="按商品名字获取所有上架中的商品",notes = "商品名字")
-    public List<Good> getGoodOnShellByName(@PathVariable String name)
+    public Result getGoodOnShellByName(@PathVariable String name)
     {
         return tmp.getGoodOnShellByName(name);
     }
@@ -78,7 +86,7 @@ public class goodController {
     @GetMapping("/getGoodOnShellByPart/{part}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value="按照分区获取所有上架中的商品",notes = "分区名")
-    public List<Good> getGoodOnShellByPart(@PathVariable String part)
+    public Result getGoodOnShellByPart(@PathVariable String part)
     {
         return tmp.getGoodOnShellByPart(part);
     }
@@ -86,7 +94,7 @@ public class goodController {
     @GetMapping("/getGoodPagedByPart")
     @ApiGroup(group = {"good"})
     @ApiOperation(value="按照分区,分页获取所有上架中的商品",notes = "分区名，页面index")
-    public Page<Good> getGoodPagedByPart(String part,Integer page)
+    public Result getGoodPagedByPart(String part,Integer page)
     {
         return tmp.getGoodPagedOnShellByPart(part,page);
     }
@@ -94,7 +102,7 @@ public class goodController {
     @GetMapping("/calculateSum")
     @ApiGroup(group={"good"})
     @ApiOperation(value = "计算总价（数量*单价+运费）",notes = "商品id，商品数量")
-    public Double caculateSum(String good_id,Integer num){
+    public Result calculateSum(String good_id,Integer num){
         return tmp.calculateSum(good_id,num);
     }
 
@@ -108,7 +116,7 @@ public class goodController {
     @PostMapping("/setGood")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费，图片")
-    public void setGood(@RequestParam("good_id") String good_id,
+    public Result setGood(@RequestParam("good_id") String good_id,
                         @RequestParam("name") String name,
                         @RequestParam("part") String part,
                         @RequestParam("inventory") Integer inventory,
@@ -116,7 +124,7 @@ public class goodController {
                         @RequestParam("price") Double price,
                         @RequestParam("freight") Double freight,
                         @RequestParam(value = "file",required = false) MultipartFile file){
-        tmp.setGood(good_id,name,part,inventory,info,price,freight,file);
+        return tmp.setGood(good_id,name,part,inventory,info,price,freight,file);
     }
 
     @PostMapping("/setGoodState")
@@ -130,7 +138,7 @@ public class goodController {
     @PostMapping("/setGoodInventory")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "修改商品库存",notes="商品id，新库存")
-    public void setGoodInvntory(@RequestParam("good_id") String good_id, @RequestParam("num") Integer num){
+    public void setGoodInventory(@RequestParam("good_id") String good_id, @RequestParam("num") Integer num){
         tmp.setInventory(good_id,num);
     }
 
@@ -138,7 +146,7 @@ public class goodController {
     @PostMapping("/setGoodPicture")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "更换/上传商品图片",notes="商品id，商品图片")
-    public boolean setGoodPicture(@RequestParam("good_id") String good_id, @RequestParam("file") MultipartFile file){
+    public Result setGoodPicture(@RequestParam("good_id") String good_id, @RequestParam("file") MultipartFile file){
         return tmp.setUrl(good_id,file);
     }
 
@@ -146,7 +154,7 @@ public class goodController {
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
-    public void releaseGood(@RequestParam("user_id") String user_id,
+    public Result releaseGood(@RequestParam("user_id") String user_id,
                             @RequestParam("name") String name,
                             @RequestParam("part") String part,
                             @RequestParam("inventory") Integer inventory,
@@ -154,13 +162,13 @@ public class goodController {
                             @RequestParam("price") Double price,
                             @RequestParam("freight") Double freight,
                             @RequestParam(value = "file",required = false) MultipartFile file){
-        tmp.releaseGood(user_id,name,part,inventory,info,price,freight,file);
+        return tmp.releaseGood(user_id,name,part,inventory,info,price,freight,file);
     }
 
     @PostMapping("/allowGoodForSale")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "批准商品上架",notes = "商品id")
-    public void allowGoodForSale(@RequestParam("good_id") String good_id){
-        tmp.allowGood(good_id);
+    public Result allowGoodForSale(@RequestParam("good_id") String good_id){
+        return tmp.allowGood(good_id);
     }
 }
