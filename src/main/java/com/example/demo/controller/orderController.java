@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ApiGroup;
 import com.example.demo.model.TradeOrder;
+import com.example.demo.result.Result;
 import com.example.demo.service.OrderService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,14 @@ public class orderController {
     @GetMapping("/getAllByBuyer/{user_id}")
     @ApiGroup(group = {"order","user"})
     @ApiOperation(value="得到该用户购买相关的所有订单",notes = "买家id")
-    public List<TradeOrder> getAllByBuyer(@PathVariable String user_id){
+    public Result getAllByBuyer(@PathVariable String user_id){
         return tmp.getAllByBuyer(user_id);
     }
 
     @GetMapping("/getAllBySeller/{user_id}")
     @ApiGroup(group = {"order","user"})
     @ApiOperation(value="得到该用户卖出物品的所有订单",notes = "卖家id")
-    public List<String> getAllByseller(@PathVariable String user_id){
+    public Result getAllByseller(@PathVariable String user_id){
         return tmp.getAllBySeller(user_id);
     }
 
@@ -36,7 +37,7 @@ public class orderController {
     @PostMapping("/generateOrder")
     @ApiGroup(group = {"order"})
     @ApiOperation(value = "生成订单",notes = "买家id，商品id，买家地址，商家地址，购买数量")
-    public String generateOrder(@RequestParam("user_id") String user_id,
+    public Result generateOrder(@RequestParam("user_id") String user_id,
                                 @RequestParam("good_id") String good_id,
                                 @RequestParam("b_addr") String b_addr,
                                 @RequestParam("s_addr") String s_addr,
@@ -48,7 +49,7 @@ public class orderController {
     @PostMapping("/payOrder")
     @ApiGroup(group = {"order"})
     @ApiOperation(value = "支付订单",notes = "订单id")
-    public boolean payOrder(@RequestParam("order_id") String order_id){
+    public Result payOrder(@RequestParam("order_id") String order_id){
         return tmp.payOrder(order_id);
     }
 
@@ -56,16 +57,22 @@ public class orderController {
     @PostMapping("/sendPackage")
     @ApiGroup(group = {"order"})
     @ApiOperation(value = "卖家发货",notes = "订单id")
-    public void sendPackage(@RequestParam("order_id") String order_id){
-        tmp.sendPackage(order_id);
+    public Result sendPackage(@RequestParam("order_id") String order_id){
+        return tmp.sendPackage(order_id);
     }
 
     @Transactional
     @PostMapping("/ackOrder")
     @ApiGroup(group = {"order"})
     @ApiOperation(value = "确认收货",notes = "订单id")
-    public void ackOrder(@RequestParam("order_id") String order_id){
-        tmp.ackOrder(order_id);
+    public Result ackOrder(@RequestParam("order_id") String order_id){
+        return tmp.ackOrder(order_id);
     }
 
+    @GetMapping("/getAllRefundingOrders/{user_id}")
+    @ApiGroup(group = {"order"})
+    @ApiOperation(value = "按照时间顺序获取该用户的所有退款中的订单",notes = "用户id")
+    public Result getAllRefundingOrders(@PathVariable("user_id") String user_id){
+        return tmp.getRefundingOrder(user_id);
+    }
 }

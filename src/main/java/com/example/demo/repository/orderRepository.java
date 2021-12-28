@@ -21,6 +21,6 @@ public interface orderRepository extends JpaRepository<TradeOrder,String> {
 
     @Transactional
     @Query(value = "select trade_order.* from trade_order join good where trade_order.good_id=good.good_id and seller_id=?1 order by start_date desc;",nativeQuery = true)
-    List<String> getAllBySeller(String sellerId);
+    List<TradeOrder> getAllBySeller(String sellerId);
 
 }
