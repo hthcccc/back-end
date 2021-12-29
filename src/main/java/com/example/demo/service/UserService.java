@@ -26,6 +26,18 @@ public class UserService implements IDGenenrator{
     @Autowired
     addressRepository addrRepo;
 
+    public boolean existsUser(String user_id){
+        return userRepo.existsById(user_id);
+    }
+
+    public boolean existsPhone(String phone){
+        if(userRepo.existsByPhone(phone)>0) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public Result getById(String ID)
     {
         if(userRepo.existsById(ID)) {
@@ -135,7 +147,7 @@ public class UserService implements IDGenenrator{
         return ResultFactory.buildFailResult("no user exists by this id");
     }
 
-    public Integer checkPasswordById(String id,String pwd)
+    public Result checkPasswordById(String id,String pwd)
     {
         if(userRepo.existsById(id))
         {
@@ -146,19 +158,19 @@ public class UserService implements IDGenenrator{
                 System.out.println("密码校验正确");
             }
             if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
-                return 1;
+                return ResultFactory.buildResult(200,"用户登录成功",null);
             }
             else {
-                return 0;
+                return ResultFactory.buildFailResult("密码错误");
             }
         }
         else{
-            return 2;
+            return ResultFactory.buildFailResult("用户id不存在");
         }
     }
 
     public String checkPassword(String user_id,String pwd){
-        if(checkPasswordById(user_id,pwd)==1){
+        if(checkPasswordById(user_id,pwd).getCode()==200){
             System.out.println("登录成功");
             String token= TokenUse.sign(user_id,pwd);
             if(token!=null){
@@ -172,7 +184,7 @@ public class UserService implements IDGenenrator{
         if(TokenUse.tokenVerify(token)) {
             String user_id = JWT.decode(token).getClaim("user_id").asString();
             String pwd = JWT.decode(token).getClaim("pwd").asString();
-            if (checkPasswordById(user_id, pwd) == 1) {
+            if (checkPasswordById(user_id, pwd).getCode() == 200) {
                 String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
                 if (token != null) {
                     return newtoken;
@@ -182,7 +194,7 @@ public class UserService implements IDGenenrator{
         }else{
             String user_id = JWT.decode(token).getClaim("user_id").asString();
             String pwd = JWT.decode(token).getClaim("pwd").asString();
-            if (checkPasswordById(user_id, pwd) == 1) {
+            if (checkPasswordById(user_id, pwd).getCode()==200) {
                 String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
                 if (token != null) {
                     return newtoken;
@@ -194,20 +206,20 @@ public class UserService implements IDGenenrator{
         return null;
     }
 
-    public Integer checkPasswordByMail(String mail,String pwd)
+    public Result checkPasswordByMail(String mail,String pwd)
     {
         if(userRepo.existsByMail(mail)>0)
         {
             User user= userRepo.getUserByMail(mail);
             if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
-                return 1;
+                return ResultFactory.buildResult(200,"用户登录成功",null);
             }
             else {
-                return 0;
+                return ResultFactory.buildFailResult("用户密码错误");
             }
         }
         else{
-            return 2;
+            return ResultFactory.buildFailResult("邮箱不存在");
         }
     }
 
@@ -227,12 +239,18 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public Result addUser(String name,String mail,String pwd){
+    public Result addUser(String name,String mail,String phone,String pwd){
         User user=new User();
         String id=generateID(16);
         user.setUserId(id);
         user.setName(name);
-        user.setMail(mail);
+        if(mail!=null&&!mail.isEmpty()&&!mail.equals("")) {
+            user.setMail(mail);
+        }
+        if(phone==null||phone.isEmpty()||phone.equals("")){
+            return ResultFactory.buildFailResult("请输入手机号");
+        }
+        user.setPhone(phone);
         user.setCredit(5);
         user.setSalt(Encryption.generateSalt());
         user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
@@ -260,11 +278,11 @@ public class UserService implements IDGenenrator{
         return ResultFactory.buildFailResult("no user exists by this id");
     }
 
-    public Integer ifExistsMail(String mail){
+    public boolean existsMail(String mail){
         if(userRepo.existsByMail(mail)>0){
-            return 1;
+            return true;
         }
-        return 0;
+        return false;
     }
 
     @Override
@@ -273,7 +291,7 @@ public class UserService implements IDGenenrator{
         Random rd = new SecureRandom();
         for(int i=0;i<length;i++){
             int bit = rd.nextInt(10);
-            id.append(String.valueOf(bit));
+            id.append(bit);
         }
         return id;
     }

@@ -17,6 +17,8 @@ public class User {
   private String sex;
   @Column(name = "mail")
   private String mail;
+  @Column(name = "phone")
+  private String phone;
   @Column(name = "password")
   private String password;
   @Column(name = "salt")
@@ -71,6 +73,13 @@ public class User {
     this.mail = mail;
   }
 
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
 
   public String getPassword() {
     return password;

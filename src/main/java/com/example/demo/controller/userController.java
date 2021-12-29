@@ -35,12 +35,12 @@ public class userController {
 //        return tmp.checkPasswordById(user_id,pwd);
 //    }
 
-    @PostMapping("/checkPasswordById")
-    @ApiGroup(group = {"user"})
-    @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
-    public Integer checkPasswordById(@RequestBody checkIDBody body){
-        return tmp.checkPasswordById(body.user_id,body.pwd);
-    }
+//    @PostMapping("/checkPasswordById")
+//    @ApiGroup(group = {"user"})
+//    @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")
+//    public Result checkPasswordById(@RequestBody checkIDBody body){
+//        return tmp.checkPasswordById(body.user_id,body.pwd);
+//    }
 
     @PostMapping("/loginByToken")
     @ApiGroup(group = {"user"})
@@ -65,7 +65,7 @@ public class userController {
     @PostMapping("/checkPasswordByMail")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验用户邮箱和密码",notes = "用户mail，密码")
-    public Integer checkPasswordByMail(@RequestBody checkMailBody body){
+    public Result checkPasswordByMail(@RequestBody checkMailBody body){
         return tmp.checkPasswordByMail(body.mail,body.pwd);
     }
 
@@ -80,11 +80,12 @@ public class userController {
     @Transactional
     @PostMapping(value = "/register")
     @ApiGroup(group = {"user"})
-    @ApiOperation(value="注册",notes="用户名字，邮箱，密码")
+    @ApiOperation(value="注册",notes="用户名字，邮箱（可无），手机，密码")
     public Result register(@RequestParam("name") String name,
                            @RequestParam("mail") String mail,
+                           @RequestParam("phone") String phone,
                            @RequestParam("pwd") String pwd) {
-        return tmp.addUser(name,mail,pwd);
+        return tmp.addUser(name,mail,phone,pwd);
     }
 
     @Transactional

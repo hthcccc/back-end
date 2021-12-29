@@ -84,6 +84,11 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.Notice,"noticeApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket adminAPI(){
+        return createBean(ApiGroupInfo.Admin,"adminApi", ApiGroupInfo.VERSION);
+    }
+
     // 通过注解进行分组
     private Docket createBean(String groupName,String desc,String version){
         return new Docket(DocumentationType.SWAGGER_2)

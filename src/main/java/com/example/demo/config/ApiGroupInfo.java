@@ -11,4 +11,5 @@ public interface ApiGroupInfo {
     String History="history";
     String Favority="favority";
     String Notice="notice";
+    String Admin="admin";
 }
