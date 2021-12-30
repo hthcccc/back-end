@@ -60,7 +60,7 @@ public class userController {
     @PostMapping("/loginById")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "通过用户id和密码校验，并返回token",notes = "用户id，密码")
-    public String loginById(@RequestBody checkIDBody body){
+    public Result loginById(@RequestBody checkIDBody body){
         return tmp.checkPassword(body.user_id,body.pwd);
     }
 //    @PostMapping("/checkPasswordByMail")

@@ -23,7 +23,7 @@ public class TokenUse {
      * @param pwd
      * @return
      */
-    public static String sign(String user_id,String pwd) {
+    public static String sign(String user_id,String pwd, String aud) {
         try {
             //设置过期时间
             Date date = new Date(System.currentTimeMillis() + overdueTime);
@@ -40,6 +40,7 @@ public class TokenUse {
                     .withClaim("user_id", user_id)
                     .withClaim("pwd", pwd)
                     .withClaim("Time", date1)
+                    .withClaim("aud", aud)
                     .withExpiresAt(date)
                     .sign(algorithm);
         } catch (UnsupportedEncodingException e) {
