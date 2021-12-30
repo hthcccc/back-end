@@ -28,6 +28,14 @@ public class userController {
         return tmp.getById(user_id);
     }
 
+    @GetMapping("/getUsersByName/{name}")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "查询昵称包含name的用户",notes="昵称")
+    public Result getUsersByName(@PathVariable("name") String name)
+    {
+        return tmp.getUsersByName(name);
+    }
+
 //    @PostMapping("/checkPasswordById")
 //    @ApiGroup(group = {"user"})
 //    @ApiOperation(value = "校验用户id和密码",notes = "用户id，密码")

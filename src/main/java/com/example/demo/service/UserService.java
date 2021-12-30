@@ -49,6 +49,16 @@ public class UserService implements IDGenenrator{
         return ResultFactory.buildFailResult("no student exists by id="+ID);
     }
 
+    public Result getUsersByName(String name){
+        List<User> users = userRepo.getUsersByName(name);
+        for(User user:users){
+            user.setBalance(0);
+            user.setPassword(null);
+            user.setSalt(null);
+        }
+        return ResultFactory.buildSuccessResult(users);
+    }
+
     public Double getBalance(String ID){
         return userRepo.getBalance(ID);
     }

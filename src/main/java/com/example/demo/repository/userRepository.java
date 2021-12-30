@@ -19,6 +19,9 @@ public interface userRepository extends JpaRepository<User,String> {
     @Query("select u from User u where u.mail=?1")
     User getUserByMail(String mail);
 
+    @Query("select u from User u where u.name like %?1%")
+    List<User> getUsersByName(String name);
+
     @Query(value = "select if((select count(*) from user where mail=?1)>0,1,0)",nativeQuery = true)
     Integer existsByMail(String mail);
 
