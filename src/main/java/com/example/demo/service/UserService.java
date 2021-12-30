@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.repository.adminRepository;
 import com.example.demo.result.*;
 import com.auth0.jwt.JWT;
 import com.example.demo.model.Address;
@@ -23,6 +24,8 @@ import java.util.*;
 public class UserService implements IDGenenrator{
     @Autowired
     userRepository userRepo;
+    @Autowired
+    adminRepository adminRepo;
     @Autowired
     addressRepository addrRepo;
 
@@ -168,7 +171,12 @@ public class UserService implements IDGenenrator{
                 System.out.println("密码校验正确");
             }
             if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
-                return ResultFactory.buildResult(200,"用户登录成功",null);
+                String token= TokenUse.sign(id,pwd,"customer");
+                if(token!=null){
+                    return ResultFactory.buildResult(200,token,null);
+                }else {
+                    return ResultFactory.buildResult(400,"Token签发失败",null);
+                }
             }
             else {
                 return ResultFactory.buildFailResult("密码错误");
@@ -179,15 +187,18 @@ public class UserService implements IDGenenrator{
         }
     }
 
-    public String checkPassword(String user_id,String pwd){
-        if(checkPasswordById(user_id,pwd).getCode()==200){
+    public Result checkPassword(String user_id,String pwd){
+        Result result = checkPasswordById(user_id,pwd);
+        if(result.getCode()==200||result.getCode()==201){
             System.out.println("登录成功");
-            String token= TokenUse.sign(user_id,pwd);
+            String token= TokenUse.sign(user_id,pwd,"customer");
             if(token!=null){
-                return token;
+                return ResultFactory.buildResult(200,token,null);
+            }else {
+                return ResultFactory.buildResult(400,"Token签发失败",null);
             }
         }
-        return null;
+        return ResultFactory.buildResult(400,result.getMsg(),null);
     }
 
     public String checkPasswordByToken(String token){
@@ -195,7 +206,7 @@ public class UserService implements IDGenenrator{
             String user_id = JWT.decode(token).getClaim("user_id").asString();
             String pwd = JWT.decode(token).getClaim("pwd").asString();
             if (checkPasswordById(user_id, pwd).getCode() == 200) {
-                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
+                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id,"customer");
                 if (token != null) {
                     return newtoken;
                 }
@@ -205,7 +216,7 @@ public class UserService implements IDGenenrator{
             String user_id = JWT.decode(token).getClaim("user_id").asString();
             String pwd = JWT.decode(token).getClaim("pwd").asString();
             if (checkPasswordById(user_id, pwd).getCode()==200) {
-                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id);
+                String newtoken = TokenUse.sign(userRepo.getName(user_id), user_id,"customer");
                 if (token != null) {
                     return newtoken;
                 }

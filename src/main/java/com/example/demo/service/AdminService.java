@@ -6,6 +6,7 @@ import com.example.demo.repository.userRepository;
 import com.example.demo.result.Result;
 import com.example.demo.result.ResultFactory;
 import com.example.demo.utils.Encryption;
+import com.example.demo.utils.TokenUse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +52,13 @@ public class AdminService implements IDGenenrator{
         String real_pwd=admin.getPassword();
         String en_pwd=Encryption.shiroEncryption(pwd,admin.getSalt());
         if(Encryption.shiroEncryption(pwd,admin.getSalt()).equals(admin.getPassword())){
-            return ResultFactory.buildResult(201,"管理员登录成功",null);
+            String token= TokenUse.sign(id,pwd,"admin");
+            if(token!=null){
+                return ResultFactory.buildResult(200,token,null);
+            }else {
+                return ResultFactory.buildResult(400,"Token签发失败",null);
+            }
+            //return ResultFactory.buildResult(201,"管理员登录成功",null);
         }
         else {
             return ResultFactory.buildFailResult("管理员密码错误");
