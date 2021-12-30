@@ -6,6 +6,7 @@ import com.example.demo.service.GoodService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +41,7 @@ public class goodController {
     @ApiGroup(group = {"good","history"})
     @ApiOperation(value = "查看商品详细信息",notes = "用户id，商品id")
     public Result browseGood(@RequestParam("user_id") String user_id,
-                           @RequestParam("good_id") String good_id){
+                             @RequestParam("good_id") String good_id){
         return tmp.browseGood(user_id,good_id);
     }
 
