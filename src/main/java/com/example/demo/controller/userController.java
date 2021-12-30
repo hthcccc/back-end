@@ -143,6 +143,16 @@ public class userController {
     }
 
     @Transactional
+    @PostMapping(value = "/resetUserPwd")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "忘记密码重置密码",notes = "用户id，新密码")
+    public Result resetUserPwd(@RequestParam("phone") String phone,
+                             @RequestParam("pwd") String pwd,
+                             @RequestParam("code") String code) {
+        return tmp.resetPassword(phone,pwd,code);
+    }
+
+    @Transactional
     @PostMapping(value = "/setUserBalance")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "设置用户余额",notes = "用户id，余额")

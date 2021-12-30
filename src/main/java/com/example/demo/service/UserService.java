@@ -299,6 +299,7 @@ public class UserService implements IDGenenrator{
         String id=generateID(16);
         user.setUserId(id);
         user.setName(name);
+        user.setPhone(phone);
         if(mail!=null&&!mail.isEmpty()&&!mail.equals("")) {
             user.setMail(mail);
         }
@@ -312,6 +313,22 @@ public class UserService implements IDGenenrator{
         user.setBalance(999.99);
         userRepo.save(user);
         return ResultFactory.buildSuccessResult(id);
+    }
+    public Result resetPassword(String phone,String pwd,String code) {
+        if(!verificationRepo.existsById(phone)){
+            return ResultFactory.buildFailResult("您还未发送验证码，请点击发送验证码。");
+        }
+        if(!checkCode(phone,code)) {
+            return ResultFactory.buildFailResult("验证码不正确！");
+        }
+        List<User> userlist = userRepo.getUserByPhone(phone);
+        if(userlist.size()==0) {
+            return ResultFactory.buildFailResult("用户不存在！");
+        }
+        User user=userlist.get(0);
+        user.setSalt(Encryption.generateSalt());
+        user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
+        return ResultFactory.buildResult(200,"密码重置成功！",null);
     }
 
     public void newAddress(String user_id,String address){

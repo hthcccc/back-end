@@ -36,4 +36,7 @@ public interface userRepository extends JpaRepository<User,String> {
     @Query("update User u set u.balance=u.balance-?2 where u.userId=?1")
     void deleteBalance(String user_id,Double cost);
 
+    @Query("select u from User u where u.phone=?1")
+    List<User> getUserByPhone(String phone);
+
 }
