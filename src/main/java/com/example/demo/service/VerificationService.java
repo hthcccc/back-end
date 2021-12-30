@@ -142,8 +142,9 @@ public class VerificationService implements IDGenenrator {
              * 相应的依赖请参照
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
-            HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
-            System.out.println(response.toString());
+            //HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
+            //System.out.println(response.toString());
+            System.out.println(code);
             insertOrReplace(phone,code);
             return ResultFactory.buildResult(200,"发送成功",null);
             //获取response的body

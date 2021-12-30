@@ -54,7 +54,7 @@ public class AdminService implements IDGenenrator{
         if(Encryption.shiroEncryption(pwd,admin.getSalt()).equals(admin.getPassword())){
             String token= TokenUse.sign(id,pwd,"admin");
             if(token!=null){
-                return ResultFactory.buildResult(200,token,null);
+                return ResultFactory.buildResult(201,token,null);
             }else {
                 return ResultFactory.buildResult(400,"Token签发失败",null);
             }
