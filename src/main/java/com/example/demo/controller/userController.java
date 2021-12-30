@@ -92,8 +92,9 @@ public class userController {
     public Result register(@RequestParam("name") String name,
                            @RequestParam("mail") String mail,
                            @RequestParam("phone") String phone,
-                           @RequestParam("pwd") String pwd) {
-        return tmp.addUser(name,mail,phone,pwd);
+                           @RequestParam("pwd") String pwd,
+                           @RequestParam("code") String code) {
+        return tmp.addUser(name,mail,phone,pwd,code);
     }
 
     @Transactional
