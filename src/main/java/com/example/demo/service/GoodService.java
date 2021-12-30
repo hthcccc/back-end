@@ -22,10 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 
@@ -59,7 +56,20 @@ public class GoodService implements IDGenenrator{
     {
         if(goodRepo.existsById(Id)) {
             Good good = goodRepo.findById(Id).get();
-            return ResultFactory.buildSuccessResult(good);
+            Map<String,Object> result=new HashMap<>();
+            result.put("good_id",good.getId());
+            result.put("name",good.getName());
+            result.put("url",good.getUrl());
+            result.put("seller_id",good.getSellerId());
+            result.put("seller_name",userRepo.getName(good.getSellerId()));
+            result.put("price",good.getPrice());
+            result.put("freight",good.getFreight());
+            result.put("info",good.getInfo());
+            result.put("inventory",good.getInventory());
+            result.put("good_state",good.getGoodState());
+            result.put("part",good.getPart());
+
+            return ResultFactory.buildSuccessResult(result);
         }
         return ResultFactory.buildFailResult("该商品不存在");
     }
@@ -84,9 +94,9 @@ public class GoodService implements IDGenenrator{
                     historyRepo.save(history);
                 }
             }
-            return ResultFactory.buildSuccessResult(good);
+            return getById(good_id);
         }else if(goodRepo.existsById(good_id)){//游客模式
-            return ResultFactory.buildResult(200,"游客模式",goodRepo.findById(good_id).get());
+            return getById(good_id);
         }
         return ResultFactory.buildFailResult("该商品不存在");
     }
