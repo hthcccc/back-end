@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.repository.adminRepository;
+import com.example.demo.repository.verificationRepository;
 import com.example.demo.result.*;
 import com.auth0.jwt.JWT;
 import com.example.demo.model.Address;
@@ -18,7 +19,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class UserService implements IDGenenrator{
@@ -28,6 +31,8 @@ public class UserService implements IDGenenrator{
     adminRepository adminRepo;
     @Autowired
     addressRepository addrRepo;
+    @Autowired
+    verificationRepository verificationRepo;
 
     public boolean existsUser(String user_id){
         return userRepo.existsById(user_id);
@@ -259,12 +264,42 @@ public class UserService implements IDGenenrator{
             return ResultFactory.buildFailResult("no user exists by this id");
         }
     }
-
-    public Result addUser(String name,String mail,String phone,String pwd){
+    public void remove(String phone){
+        if(verificationRepo.existsById(phone)){
+            verificationRepo.deleteById(phone);
+        }
+    }
+    public boolean isOverdue(String phone){
+        if(verificationRepo.existsById(phone)){
+            System.out.println(verificationRepo.findById(phone).get().getTimestamp().plusMillis(TimeUnit.SECONDS.toMillis(600)));
+            System.out.println(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
+            if(verificationRepo.findById(phone).get().getTimestamp().plusMillis(TimeUnit.SECONDS.toMillis(900)).isBefore(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)))){
+                remove(phone);
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean checkCode(String phone,String code){
+        if(verificationRepo.existsById(phone)&&code.equals(verificationRepo.findById(phone).get().getCode())&&!isOverdue(phone)){
+            return true;
+        }
+        return false;
+    }
+    public Result addUser(String name,String mail,String phone,String pwd,String code){
+        if(!verificationRepo.existsById(phone)){
+            return ResultFactory.buildFailResult("请点击发送验证码");
+        }
+        if(!checkCode(phone,code)) {
+            return ResultFactory.buildFailResult("验证码不正确");
+        }
         User user=new User();
         String id=generateID(16);
         user.setUserId(id);
         user.setName(name);
+        user.setPhone(phone);
         if(mail!=null&&!mail.isEmpty()&&!mail.equals("")) {
             user.setMail(mail);
         }
@@ -278,6 +313,22 @@ public class UserService implements IDGenenrator{
         user.setBalance(999.99);
         userRepo.save(user);
         return ResultFactory.buildSuccessResult(id);
+    }
+    public Result resetPassword(String phone,String pwd,String code) {
+        if(!verificationRepo.existsById(phone)){
+            return ResultFactory.buildFailResult("您还未发送验证码，请点击发送验证码。");
+        }
+        if(!checkCode(phone,code)) {
+            return ResultFactory.buildFailResult("验证码不正确！");
+        }
+        List<User> userlist = userRepo.getUserByPhone(phone);
+        if(userlist.size()==0) {
+            return ResultFactory.buildFailResult("用户不存在！");
+        }
+        User user=userlist.get(0);
+        user.setSalt(Encryption.generateSalt());
+        user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
+        return ResultFactory.buildResult(200,"密码重置成功！",null);
     }
 
     public void newAddress(String user_id,String address){

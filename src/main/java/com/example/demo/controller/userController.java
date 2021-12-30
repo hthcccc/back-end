@@ -92,8 +92,9 @@ public class userController {
     public Result register(@RequestParam("name") String name,
                            @RequestParam("mail") String mail,
                            @RequestParam("phone") String phone,
-                           @RequestParam("pwd") String pwd) {
-        return tmp.addUser(name,mail,phone,pwd);
+                           @RequestParam("pwd") String pwd,
+                           @RequestParam("code") String code) {
+        return tmp.addUser(name,mail,phone,pwd,code);
     }
 
     @Transactional
@@ -139,6 +140,16 @@ public class userController {
     public void setUserPwd(@RequestParam("user_id") String user_id,
                            @RequestParam("pwd") String pwd) {
         tmp.setUserPwd(user_id,pwd);
+    }
+
+    @Transactional
+    @PostMapping(value = "/resetUserPwd")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "忘记密码重置密码",notes = "用户id，新密码")
+    public Result resetUserPwd(@RequestParam("phone") String phone,
+                             @RequestParam("pwd") String pwd,
+                             @RequestParam("code") String code) {
+        return tmp.resetPassword(phone,pwd,code);
     }
 
     @Transactional
