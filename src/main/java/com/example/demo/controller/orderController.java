@@ -40,6 +40,13 @@ public class orderController {
         return tmp.getOrderInfo(order_id);
     }
 
+    @GetMapping("/getRefundingState/{order_id}")
+    @ApiGroup(group = {"order"})
+    @ApiOperation(value="返回订单退款状态，200：没退款过，201：退款过，202：已仲裁过",notes = "订单id")
+    public Result getRefundingState(@PathVariable String order_id){
+        return tmp.getRefundState(order_id);
+    }
+
     @Transactional
     @PostMapping("/generateOrder")
     @ApiGroup(group = {"order"})

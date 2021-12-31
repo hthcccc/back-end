@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 @Table(name = "refund")
 @Entity
@@ -16,12 +17,23 @@ public class Refund {
     @Column(name = "refund_state")
     private String refundState;
 
+    @Column(name = "refund_time")
+    private Instant refund_time;
+
     public String getRefundState() {
         return refundState;
     }
 
     public void setRefundState(String refundState) {
         this.refundState = refundState;
+    }
+
+    public Instant getRefund_time() {
+        return refund_time;
+    }
+
+    public void setRefund_time(Instant refund_time) {
+        this.refund_time = refund_time;
     }
 
     public String getText() {

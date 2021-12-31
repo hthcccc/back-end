@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Good;
+import com.example.demo.model.Refund;
 import com.example.demo.model.TradeOrder;
 import com.example.demo.model.User;
 import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.orderRepository;
+import com.example.demo.repository.refundRepository;
 import com.example.demo.repository.userRepository;
 import com.example.demo.result.Result;
 import com.example.demo.result.ResultFactory;
@@ -24,12 +26,12 @@ public class OrderService implements IDGenenrator{
 
     @Autowired
     orderRepository orderRepo;
-
     @Autowired
     goodRepository goodRepo;
-
     @Autowired
     userRepository userRepo;
+    @Autowired
+    refundRepository refundRepo;
 
     public Result getOrderInfo(String order_id){
         if(orderRepo.existsById(order_id)){
@@ -55,6 +57,25 @@ public class OrderService implements IDGenenrator{
             return ResultFactory.buildSuccessResult(map);
         }
         return ResultFactory.buildFailResult("不存在该订单");
+    }
+
+    public Result getRefundState(String order_id){
+        if(!orderRepo.existsById(order_id)){
+            return ResultFactory.buildFailResult("查询失败");
+        }
+        TradeOrder order=orderRepo.findById(order_id).get();
+        if(!refundRepo.existsById(order_id)){
+            return ResultFactory.buildResult(200,"没退款过",null);
+        }
+        if(order.getOrderState().equals("已退款")){
+            return ResultFactory.buildResult(201,"退款过",null);
+        }
+        if(refundRepo.findById(order.getId()).get().getRefundState().equals("仲裁批准")||
+                refundRepo.findById(order.getId()).get().getRefundState().equals("仲裁驳回")){
+            return ResultFactory.buildResult(202,"已仲裁过",null);
+        }
+        return ResultFactory.buildFailResult("查询异常");
+
     }
 
     public Result generateOrder(String u_id, String g_id, String buy_address,
@@ -138,7 +159,7 @@ public class OrderService implements IDGenenrator{
         Example<TradeOrder> orderExample=Example.of(order);
         Sort sort = Sort.sort(TradeOrder.class).descending();
         sort.getOrderFor("startDate");
-        List<TradeOrder> orderList = orderRepo.findAll(orderExample);
+        List<TradeOrder> orderList = orderRepo.findAll(orderExample,sort);
         List<Map<String,Object>> result= new ArrayList<>();
         for(TradeOrder order1:orderList){
             Map<String,Object> map=new HashMap<>();
