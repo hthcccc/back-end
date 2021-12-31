@@ -38,5 +38,4 @@ public interface userRepository extends JpaRepository<User,String> {
 
     @Query("select u from User u where u.phone=?1")
     List<User> getUserByPhone(String phone);
-
 }

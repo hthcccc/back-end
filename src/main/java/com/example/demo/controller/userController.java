@@ -211,4 +211,11 @@ public class userController {
         return tmp.updateUserInfo(user_id,name,mail,sex,Integer.valueOf(age));
     }
 
+    @Transactional
+    @PostMapping("/viewCreditHistory")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "查看历史信用",notes = "用户id")
+    public Result viewCreditHistory( @RequestParam("user_id") String user_id){
+        return tmp.getCreditHistory(user_id);
+    }
 }

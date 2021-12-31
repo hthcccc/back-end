@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.repository.adminRepository;
+import com.example.demo.repository.creditRepository;
 import com.example.demo.repository.verificationRepository;
 import com.example.demo.result.*;
 import com.auth0.jwt.JWT;
@@ -33,6 +34,8 @@ public class UserService implements IDGenenrator{
     addressRepository addrRepo;
     @Autowired
     verificationRepository verificationRepo;
+    @Autowired
+    creditRepository creditRepo;
 
     public boolean existsUser(String user_id){
         return userRepo.existsById(user_id);
@@ -394,6 +397,8 @@ public class UserService implements IDGenenrator{
         }
     }
 
-
+    public Result getCreditHistory(String uid) {
+        return ResultFactory.buildResult(200,"成功",creditRepo.getCreditHistory(uid));
+    }
 
 }
