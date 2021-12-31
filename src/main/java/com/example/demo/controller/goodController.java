@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.ApiGroup;
 import com.example.demo.model.Good;
 import com.example.demo.service.GoodService;
+import com.example.demo.utils.TokenUse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -155,7 +156,7 @@ public class goodController {
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
-    public Result releaseGood(@RequestParam("user_id") String user_id,
+    public Result releaseGood(@RequestParam("Authorization") String token,
                             @RequestParam("name") String name,
                             @RequestParam("part") String part,
                             @RequestParam("inventory") Integer inventory,
@@ -163,6 +164,8 @@ public class goodController {
                             @RequestParam("price") Double price,
                             @RequestParam("freight") Double freight,
                             @RequestParam(value = "file",required = false) MultipartFile file){
+        String user_id = TokenUse.getUserID(token);
+        System.out.println("用户ID"+user_id);
         return tmp.releaseGood(user_id,name,part,inventory,info,price,freight,file);
     }
 
