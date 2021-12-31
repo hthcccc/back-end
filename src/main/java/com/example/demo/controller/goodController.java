@@ -46,6 +46,17 @@ public class goodController {
         return tmp.browseGood(user_id,good_id);
     }
 
+    @GetMapping("/getFilteredGoods")
+    @ApiGroup(group = {"good"})
+    @ApiOperation(value = "通过商品名字，分区，状态筛选用户id发布的商品",notes = "用户id，商品名字，商品分区，商品状态")
+    public Result findFilteredGoods(String seller_id,
+                                    String name,
+                                    String part,
+                                    String state){
+        System.out.println("开始筛选");
+        return tmp.findFilteredGoods(seller_id,name,part,state);
+    }
+
     @GetMapping("/getGoodUrl/{good_id}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "获取商品图片url", notes = "商品id")

@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.controller.resultBody.*;
-import com.example.demo.model.Good;
-import com.example.demo.model.History;
-import com.example.demo.model.HistoryId;
-import com.example.demo.model.Part;
+import com.example.demo.model.*;
 import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.historyRepository;
 import com.example.demo.repository.partRepository;
@@ -158,6 +155,30 @@ public class GoodService implements IDGenenrator{
         return ResultFactory.buildFailResult("不存在该商品");
     }
 
+    public Result findFilteredGoods(String seller_id,String name,String part,String state){
+        if(!userRepo.existsById(seller_id)){
+            return ResultFactory.buildFailResult("请输入正确的用户id");
+        }
+        Good good =new Good();
+        ExampleMatcher exampleMatcher=ExampleMatcher.matching();
+        good.setSellerId(seller_id);
+        exampleMatcher=exampleMatcher.withMatcher("sellerId",ExampleMatcher.GenericPropertyMatchers.exact());
+        if(name!=null&&!name.isEmpty()&&!name.equals("")){
+            good.setName(name);
+            exampleMatcher=exampleMatcher.withMatcher("name",ExampleMatcher.GenericPropertyMatchers.contains());
+        }
+        if(part!=null&&!part.isEmpty()&&!part.equals("")&&partRepo.existsById(part)){
+            good.setPart(part);
+            exampleMatcher=exampleMatcher.withMatcher("part",ExampleMatcher.GenericPropertyMatchers.exact());
+        }
+        if(state!=null&&!state.isEmpty()&&!state.equals("")&&goodstate.isGoodState(state)){
+            good.setGoodState(state);
+            exampleMatcher=exampleMatcher.withMatcher("goodState",ExampleMatcher.GenericPropertyMatchers.exact());
+        }
+        Example<Good> example = Example.of(good,exampleMatcher);
+        return ResultFactory.buildSuccessResult(goodRepo.findAll(example));
+    }
+
     public Result setGood(String g_id, String name,
                                    String part, Integer inventory,
                                    String info, Double prize, Double freight, MultipartFile file)
@@ -172,7 +193,8 @@ public class GoodService implements IDGenenrator{
             if(freight>=0){good.setFreight(freight);}
             goodRepo.save(good);
             if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
-            return ResultFactory.buildResult(200,"修改商品成功",null);
+            good.setGoodState("待审核");
+            return ResultFactory.buildResult(200,"修改商品成功，需要重新审核",null);
         }
         return ResultFactory.buildFailResult("不存在该商品");
     }
