@@ -146,6 +146,7 @@ public class OrderService implements IDGenenrator{
             map.put("name",goodRepo.findById(order1.getGoodId()).get().getName());
             map.put("start_date",order1.getStartDate());
             map.put("order_state",order1.getOrderState());
+            map.put("price",order1.getPrice());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
@@ -167,6 +168,7 @@ public class OrderService implements IDGenenrator{
                 map.put("order_state",order1.getOrderState());
                 map.put("good_url",goodRepo.findById(order1.getGoodId()).get().getUrl());
                 map.put("isRefunding",order1.getIsRefunding());
+                map.put("price",order1.getPrice());
                 result.add(map);
             }
             return ResultFactory.buildSuccessResult(result);
@@ -187,6 +189,7 @@ public class OrderService implements IDGenenrator{
                 map.put("order_state",order1.getOrderState());
                 map.put("good_url",goodRepo.findById(order1.getGoodId()).get().getUrl());
                 map.put("isRefunding",order1.getIsRefunding());
+                map.put("price",order1.getPrice());
                 result.add(map);
             }
             return ResultFactory.buildSuccessResult(result);
