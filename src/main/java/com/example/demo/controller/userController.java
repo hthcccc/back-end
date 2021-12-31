@@ -182,9 +182,11 @@ public class userController {
     @PostMapping("/newAddress")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "新增地址",notes = "用户id，新地址")
-    public void newAddress(@RequestParam("user_id") String user_id,
+    public Result newAddress( @RequestHeader("Authorization") String token,
                            @RequestParam("address") String address){
-        tmp.newAddress(user_id,address);
+        String user_id = TokenUse.getUserID(token);
+        System.out.println("用户ID"+user_id);
+        return tmp.newAddress(user_id,address);
     }
 
     @Transactional
@@ -198,7 +200,7 @@ public class userController {
     @Transactional
     @PostMapping("/modifyUserInfo")
     @ApiGroup(group = {"user"})
-    @ApiOperation(value = "修改用户信息",notes = "用户id，新地址")
+    @ApiOperation(value = "修改用户信息",notes = "Authorization是用户当前的Token")
     public Result modifyUserInfo( @RequestHeader("Authorization") String token,
                                 @RequestParam("name") String name,
                                 @RequestParam("mail") String mail,

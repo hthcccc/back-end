@@ -332,10 +332,12 @@ public class UserService implements IDGenenrator{
         return ResultFactory.buildResult(200,"密码重置成功！",null);
     }
 
-    public void newAddress(String user_id,String address){
+    public Result newAddress(String user_id,String address){
         if(!addrRepo.existsById(new AddressId(user_id,address))){
             addrRepo.save(new Address(user_id,address));
+            return ResultFactory.buildResult(200,"地址保存成功！",null);
         }
+        return ResultFactory.buildResult(400,"新增的地址已经存在",null);
     }
 
     public void removeOneAddress(String user_id,String address){
