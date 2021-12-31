@@ -156,7 +156,7 @@ public class goodController {
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
-    public Result releaseGood(@RequestParam("Authorization") String token,
+    public Result releaseGood(@RequestHeader("Authorization") String token,
                             @RequestParam("name") String name,
                             @RequestParam("part") String part,
                             @RequestParam("inventory") Integer inventory,
