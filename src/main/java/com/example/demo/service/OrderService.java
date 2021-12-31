@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class OrderService implements IDGenenrator{
@@ -32,6 +30,32 @@ public class OrderService implements IDGenenrator{
 
     @Autowired
     userRepository userRepo;
+
+    public Result getOrderInfo(String order_id){
+        if(orderRepo.existsById(order_id)){
+            TradeOrder order = orderRepo.findById(order_id).get();
+            Good good =goodRepo.findById(order.getGoodId()).get();
+            Map<String,Object> map =new HashMap<>();
+            map.put("order_id",order.getId());
+            map.put("seller_id",good.getSellerId());
+            map.put("seller_name",userRepo.findById(good.getSellerId()).get().getName());
+            map.put("good_id",good.getId());
+            map.put("good_name",good.getName());
+            map.put("good_url",good.getUrl());
+            map.put("order_state",order.getOrderState());
+            map.put("isRefunding",order.getIsRefunding());
+            map.put("price",order.getPrice());
+            map.put("num",order.getNum());
+            map.put("start_date",order.getStartDate());
+            map.put("buyer_address",order.getBuyerAddress());
+            map.put("seller_address",order.getSellerAddress());
+            map.put("buyer_id",order.getBuyerId());
+            map.put("buyer_name",userRepo.findById(order.getBuyerId()).get().getName());
+
+            return ResultFactory.buildSuccessResult(map);
+        }
+        return ResultFactory.buildFailResult("不存在该订单");
+    }
 
     public Result generateOrder(String u_id, String g_id, String buy_address,
                                 String sell_address, Integer num) {
@@ -114,7 +138,17 @@ public class OrderService implements IDGenenrator{
         Example<TradeOrder> orderExample=Example.of(order);
         Sort sort = Sort.sort(TradeOrder.class).descending();
         sort.getOrderFor("startDate");
-        return ResultFactory.buildSuccessResult(orderRepo.findAll(orderExample));
+        List<TradeOrder> orderList = orderRepo.findAll(orderExample);
+        List<Map<String,Object>> result= new ArrayList<>();
+        for(TradeOrder order1:orderList){
+            Map<String,Object> map=new HashMap<>();
+            map.put("order_id",order1.getId());
+            map.put("name",goodRepo.findById(order1.getGoodId()).get().getName());
+            map.put("start_date",order1.getStartDate());
+            map.put("order_state",order1.getOrderState());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public void setOrderState(String order_id,String newstate){
@@ -123,7 +157,19 @@ public class OrderService implements IDGenenrator{
 
     public Result getAllByBuyer(String buyerId){
         if(userRepo.existsById(buyerId)){
-            return ResultFactory.buildSuccessResult(orderRepo.getAllByBuyer(buyerId));
+            List<TradeOrder> orderList = orderRepo.getAllByBuyer(buyerId);
+            List<Map<String,Object>> result= new ArrayList<>();
+            for(TradeOrder order1:orderList){
+                Map<String,Object> map=new HashMap<>();
+                map.put("order_id",order1.getId());
+                map.put("name",goodRepo.findById(order1.getGoodId()).get().getName());
+                map.put("start_date",order1.getStartDate());
+                map.put("order_state",order1.getOrderState());
+                map.put("good_url",goodRepo.findById(order1.getGoodId()).get().getUrl());
+                map.put("isRefunding",order1.getIsRefunding());
+                result.add(map);
+            }
+            return ResultFactory.buildSuccessResult(result);
         }else{
             return ResultFactory.buildFailResult("该用户不存在");
         }
@@ -131,7 +177,19 @@ public class OrderService implements IDGenenrator{
 
     public Result getAllBySeller(String sellerId){
         if(userRepo.existsById(sellerId)){
-            return ResultFactory.buildSuccessResult(orderRepo.getAllBySeller(sellerId));
+            List<TradeOrder> orderList = orderRepo.getAllBySeller(sellerId);
+            List<Map<String,Object>> result= new ArrayList<>();
+            for(TradeOrder order1:orderList){
+                Map<String,Object> map=new HashMap<>();
+                map.put("order_id",order1.getId());
+                map.put("name",goodRepo.findById(order1.getGoodId()).get().getName());
+                map.put("start_date",order1.getStartDate());
+                map.put("order_state",order1.getOrderState());
+                map.put("good_url",goodRepo.findById(order1.getGoodId()).get().getUrl());
+                map.put("isRefunding",order1.getIsRefunding());
+                result.add(map);
+            }
+            return ResultFactory.buildSuccessResult(result);
         }else{
             return ResultFactory.buildFailResult("不存在该用户");
         }

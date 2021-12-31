@@ -33,6 +33,13 @@ public class orderController {
         return tmp.getAllBySeller(user_id);
     }
 
+    @GetMapping("/getOrderInfo/{order_id}")
+    @ApiGroup(group = {"order","user"})
+    @ApiOperation(value="查询某笔订单详细信息",notes = "订单id")
+    public Result getOrderInfo(@PathVariable String order_id){
+        return tmp.getOrderInfo(order_id);
+    }
+
     @Transactional
     @PostMapping("/generateOrder")
     @ApiGroup(group = {"order"})
