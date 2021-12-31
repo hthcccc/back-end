@@ -1,14 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.controller.resultBody.*;
-import com.example.demo.model.Good;
-import com.example.demo.model.History;
-import com.example.demo.model.HistoryId;
-import com.example.demo.model.Part;
+import com.example.demo.model.*;
 import com.example.demo.repository.goodRepository;
 import com.example.demo.repository.historyRepository;
 import com.example.demo.repository.partRepository;
 import com.example.demo.repository.userRepository;
+import com.example.demo.repository.recplanRepository;
 import com.example.demo.result.*;
 import com.example.demo.result.Result;
 import io.minio.*;
@@ -49,6 +47,8 @@ public class GoodService implements IDGenenrator{
     partRepository partRepo;
     @Autowired
     historyRepository historyRepo;
+    @Autowired
+    recplanRepository recplanRepo;
     @Resource
     MinioClient client;
 
@@ -290,6 +290,11 @@ public class GoodService implements IDGenenrator{
             Good good=goodRepo.findById(id).get();
             result.add(good);
         }
+        return ResultFactory.buildSuccessResult(result);
+    }
+
+    public Result getRecommendPlans(){
+        List<RecPlans> result=recplanRepo.getAllPlans();
         return ResultFactory.buildSuccessResult(result);
     }
 
