@@ -195,4 +195,18 @@ public class userController {
                            @RequestParam("address") String address){
         tmp.removeOneAddress(user_id,address);
     }
+    @Transactional
+    @PostMapping("/modifyUserInfo")
+    @ApiGroup(group = {"user"})
+    @ApiOperation(value = "修改用户信息",notes = "用户id，新地址")
+    public Result modifyUserInfo( @RequestHeader("Authorization") String token,
+                                @RequestParam("name") String name,
+                                @RequestParam("mail") String mail,
+                                @RequestParam("sex") String sex,
+                                @RequestParam("age") String age){
+        String user_id = TokenUse.getUserID(token);
+        System.out.println("用户ID"+user_id);
+        return tmp.updateUserInfo(user_id,name,mail,sex,Integer.valueOf(age));
+    }
+
 }

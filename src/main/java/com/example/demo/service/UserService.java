@@ -328,6 +328,7 @@ public class UserService implements IDGenenrator{
         User user=userlist.get(0);
         user.setSalt(Encryption.generateSalt());
         user.setPassword(Encryption.shiroEncryption(pwd,user.getSalt()));
+        userRepo.save(user);
         return ResultFactory.buildResult(200,"密码重置成功！",null);
     }
 
@@ -348,6 +349,19 @@ public class UserService implements IDGenenrator{
             return ResultFactory.buildSuccessResult(addrRepo.getAllAddress(user_id));
         }
         return ResultFactory.buildFailResult("no user exists by this id");
+    }
+
+    public Result updateUserInfo(String user_id,String name,String mail,String sex,Integer age){
+        if(userRepo.existsById(user_id)){
+            User user = userRepo.getOne(user_id);
+            user.setName(name);
+            user.setMail(mail);
+            user.setSex(sex);
+            user.setAge(age);
+            userRepo.save(user);
+            return ResultFactory.buildSuccessResult("用户信息更新成功");
+        }
+        return ResultFactory.buildFailResult("用户不存在");
     }
 
     public boolean existsMail(String mail){
