@@ -71,6 +71,14 @@ public class GoodService implements IDGenenrator{
         return ResultFactory.buildFailResult("该商品不存在");
     }
 
+    public Result getAllGoodsToBeAudited(){
+        Good good=new Good();
+        good.setGoodState("待审核");
+        Example<Good> example=Example.of(good);
+        List<Good> goods=goodRepo.findAll(example);
+        return ResultFactory.buildSuccessResult(goods);
+    }
+
     public Result browseGood(String user_id, String good_id){
         if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
             Good good=goodRepo.findById(good_id).get();

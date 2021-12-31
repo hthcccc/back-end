@@ -57,6 +57,13 @@ public class goodController {
         return tmp.findFilteredGoods(seller_id,name,part,state);
     }
 
+    @GetMapping("/getAllGoodsToBeAudited")
+    @ApiGroup(group = {"good","admin"})
+    @ApiOperation(value = "管理员获取所有待审核的商品")
+    public Result getAllGoodsToBeAudited(){
+        return tmp.getAllGoodsToBeAudited();
+    }
+
     @GetMapping("/getGoodUrl/{good_id}")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "获取商品图片url", notes = "商品id")

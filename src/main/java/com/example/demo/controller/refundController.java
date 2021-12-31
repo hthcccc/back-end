@@ -78,7 +78,7 @@ public class refundController {
 
     @Transactional
     @PostMapping("/refuseArbitition")
-    @ApiGroup(group = {"refund"})
+    @ApiGroup(group = {"refund","admin"})
     @ApiOperation(value = "冲裁驳回",notes = "订单id")
     public Result refuseArbitrition(@RequestParam("order_id") String order_id){
         return tmp.refuseArbitration(order_id);
@@ -86,7 +86,7 @@ public class refundController {
 
     @Transactional
     @PostMapping("/permitArbitition")
-    @ApiGroup(group = {"refund"})
+    @ApiGroup(group = {"refund","admin"})
     @ApiOperation(value = "冲裁批准",notes = "订单id")
     public Result permitArbitrition(@RequestParam("order_id") String order_id){
         return tmp.permitArbitration(order_id);
