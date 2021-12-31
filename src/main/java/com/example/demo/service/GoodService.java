@@ -177,7 +177,7 @@ public class GoodService implements IDGenenrator{
         return ResultFactory.buildFailResult("不存在该商品");
     }
 
-    public void setGoodState(String g_id,String newState)
+    public Result setGoodState(String g_id,String newState)
     {
         if(goodRepo.existsById(g_id))
         {
@@ -186,7 +186,9 @@ public class GoodService implements IDGenenrator{
                 good.setGoodState(newState);
                 goodRepo.save(good);
             }
+            return ResultFactory.buildResult(200,"修改商品成功",null);
         }
+        return ResultFactory.buildFailResult("不存在该商品");
     }
 
     public void setInventory(String g_id,Integer num){

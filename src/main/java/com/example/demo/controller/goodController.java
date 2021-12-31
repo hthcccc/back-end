@@ -132,8 +132,8 @@ public class goodController {
     @PostMapping("/setGoodState")
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "设置商品状态",notes = "商品id，商品新状态")
-    public void setGoodState(@RequestParam("good_id") String good_id, @RequestParam("state") String state){
-        tmp.setGoodState(good_id,state);
+    public Result setGoodState(@RequestParam("good_id") String good_id, @RequestParam("state") String state){
+        return tmp.setGoodState(good_id,state);
     }
 
     @Transactional
