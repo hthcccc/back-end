@@ -95,9 +95,10 @@ public class refundController {
     @Transactional
     @PostMapping("/submitArbitition")
     @ApiGroup(group = {"refund"})
-    @ApiOperation(value = "提交冲裁申请",notes = "订单id")
-    public Result submitArbitrition(@RequestParam("order_id") String order_id){
-        return tmp.submitArbitration(order_id);
+    @ApiOperation(value = "提交冲裁申请",notes = "订单id，仲裁理由")
+    public Result submitArbitrition(@RequestParam("order_id") String order_id,
+                                    @RequestParam("text") String text){
+        return tmp.submitArbitration(order_id,text);
     }
 
 

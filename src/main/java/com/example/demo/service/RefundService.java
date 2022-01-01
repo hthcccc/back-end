@@ -89,12 +89,38 @@ public class RefundService{
 
     public Result getAllByBuyer(String buyer_id){
         if(!userRepo.existsById(buyer_id)){return ResultFactory.buildFailResult("不存在该用户");}
-        return ResultFactory.buildSuccessResult(refundRepo.getAllByBuyer(buyer_id));
+        List<Refund> refunds = refundRepo.getAllByBuyer(buyer_id);
+        List<Map<String,Object>> result=new ArrayList<>();
+        for(Refund refund:refunds){
+            Map<String,Object> map=new HashMap<>();
+            map.put("order_id",refund.getId());
+            map.put("text",refund.getText());
+            map.put("refund_state",refund.getRefundState());
+            map.put("refund_time",refund.getRefund_time());
+            TradeOrder order=orderRepo.findById(refund.getId()).get();
+            map.put("good_id",order.getGoodId());
+            map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public Result getAllBySeller(String seller_id){
         if(!userRepo.existsById(seller_id)){return ResultFactory.buildFailResult("不存在该用户");}
-        return ResultFactory.buildSuccessResult(refundRepo.getAllBySeller(seller_id));
+        List<Refund> refunds = refundRepo.getAllBySeller(seller_id);
+        List<Map<String,Object>> result=new ArrayList<>();
+        for(Refund refund:refunds){
+            Map<String,Object> map=new HashMap<>();
+            map.put("order_id",refund.getId());
+            map.put("text",refund.getText());
+            map.put("refund_state",refund.getRefundState());
+            map.put("refund_time",refund.getRefund_time());
+            TradeOrder order=orderRepo.findById(refund.getId()).get();
+            map.put("good_id",order.getGoodId());
+            map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public Result cancelRefund(String order_id){
@@ -147,7 +173,7 @@ public class RefundService{
         return ResultFactory.buildResult(200,"退款驳回",null);
     }
 
-    public Result submitArbitration(String order_id){
+    public Result submitArbitration(String order_id,String text){
         if(!orderRepo.existsById(order_id)){return ResultFactory.buildFailResult("不存在该订单");}
         if(!refundRepo.existsById(order_id)){return ResultFactory.buildFailResult("不存在该退款");}
         TradeOrder order=orderRepo.getOne(order_id);
@@ -156,6 +182,9 @@ public class RefundService{
         Refund refund=refundRepo.findById(order_id).get();
         if(!refund.getRefundState().equals("卖家驳回")){return ResultFactory.buildFailResult("退款状态错误");}
         refund.setRefundState("待仲裁");
+        if(text!=null&&!text.isEmpty()&&!text.equals("")){
+            refund.setText(text);
+        }
         refundRepo.save(refund);
         return ResultFactory.buildResult(200,"已提交仲裁",null);
     }
