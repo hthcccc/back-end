@@ -188,7 +188,7 @@ public class goodController {
     }
 
     @PostMapping("/allowGoodForSale")
-    @ApiGroup(group = {"good"})
+    @ApiGroup(group = {"good","admin"})
     @ApiOperation(value = "批准商品上架",notes = "商品id")
     public Result allowGoodForSale(@RequestParam("good_id") String good_id){
         return tmp.allowGood(good_id);
