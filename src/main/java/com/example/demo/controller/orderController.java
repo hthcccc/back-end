@@ -54,9 +54,8 @@ public class orderController {
     public Result generateOrder(@RequestParam("user_id") String user_id,
                                 @RequestParam("good_id") String good_id,
                                 @RequestParam("b_addr") String b_addr,
-                                @RequestParam("s_addr") String s_addr,
                                 @RequestParam("num") Integer num){
-        return tmp.generateOrder(user_id,good_id,b_addr,s_addr,num);
+        return tmp.generateOrder(user_id,good_id,b_addr,num);
     }
 
     @Transactional

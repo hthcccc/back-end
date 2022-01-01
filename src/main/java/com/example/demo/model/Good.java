@@ -37,6 +37,17 @@ public class Good {
     @Column(name="pict_url")
     private String url;
 
+    @Column(name="ship_address")
+    private String ship_address;
+
+    public String getShip_address() {
+        return ship_address;
+    }
+
+    public void setShip_address(String ship_address) {
+        this.ship_address = ship_address;
+    }
+
     public String getUrl() {
         return url;
     }

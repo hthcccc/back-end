@@ -78,8 +78,7 @@ public class OrderService implements IDGenenrator{
 
     }
 
-    public Result generateOrder(String u_id, String g_id, String buy_address,
-                                String sell_address, Integer num) {
+    public Result generateOrder(String u_id, String g_id, String buy_address, Integer num) {
         if(userRepo.existsById(u_id)&&goodRepo.existsById(g_id)) {
             //卖家不能购买自己发布的商品
             if(goodRepo.findById(g_id).get().getSellerId().equals(u_id)){
@@ -102,7 +101,7 @@ public class OrderService implements IDGenenrator{
             order.setPrice(goodRepo.calculateSum(g_id,num));
             order.setStartDate(Instant.now());
             order.setBuyerAddress(buy_address);
-            order.setSellerAddress(sell_address);
+            order.setSellerAddress(goodRepo.findById(g_id).get().getShip_address());
             order.setOrderState("未支付");
             order.setIsRefunding("n");
             orderRepo.save(order);

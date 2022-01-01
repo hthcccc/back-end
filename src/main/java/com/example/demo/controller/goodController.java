@@ -135,16 +135,17 @@ public class goodController {
 
     @PostMapping("/setGood")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，商品价格，运费，图片")
+    @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，发货地址，商品价格，运费，图片")
     public Result setGood(@RequestParam("good_id") String good_id,
                         @RequestParam("name") String name,
                         @RequestParam("part") String part,
                         @RequestParam("inventory") Integer inventory,
                         @RequestParam("info") String info,
+                        @RequestParam("addr") String addr,
                         @RequestParam("price") Double price,
                         @RequestParam("freight") Double freight,
                         @RequestParam(value = "file",required = false) MultipartFile file){
-        return tmp.setGood(good_id,name,part,inventory,info,price,freight,file);
+        return tmp.setGood(good_id,name,part,inventory,info,addr,price,freight,file);
     }
 
     @PostMapping("/setGoodState")
@@ -173,18 +174,19 @@ public class goodController {
     @Transactional
     @PostMapping("/releaseGood")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，商品价格，邮费")
+    @ApiOperation(value = "发布商品",notes = "用户id，商品名字，商品分区，商品库存，商品信息，发货地址，商品价格，邮费")
     public Result releaseGood(@RequestHeader("Authorization") String token,
                             @RequestParam("name") String name,
                             @RequestParam("part") String part,
                             @RequestParam("inventory") Integer inventory,
                             @RequestParam("info") String info,
+                            @RequestParam("addr") String addr,
                             @RequestParam("price") Double price,
                             @RequestParam("freight") Double freight,
                             @RequestParam(value = "file",required = false) MultipartFile file){
         String user_id = TokenUse.getUserID(token);
         System.out.println("用户ID"+user_id);
-        return tmp.releaseGood(user_id,name,part,inventory,info,price,freight,file);
+        return tmp.releaseGood(user_id,name,part,inventory,info,addr,price,freight,file);
     }
 
     @PostMapping("/allowGoodForSale")

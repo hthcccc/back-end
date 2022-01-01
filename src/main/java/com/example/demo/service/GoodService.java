@@ -59,6 +59,7 @@ public class GoodService implements IDGenenrator{
             result.put("url",good.getUrl());
             result.put("seller_id",good.getSellerId());
             result.put("seller_name",userRepo.getName(good.getSellerId()));
+            result.put("seller_address",good.getShip_address());
             result.put("price",good.getPrice());
             result.put("freight",good.getFreight());
             result.put("info",good.getInfo());
@@ -142,8 +143,8 @@ public class GoodService implements IDGenenrator{
     }
 
     public Result releaseGood(String u_id,String name,
-                            String part,Integer inventory,
-                        String info,Double prize,Double freight,MultipartFile file)
+                            String part,Integer inventory,String info,
+                            String addr,Double prize,Double freight,MultipartFile file)
     {
         if(userRepo.existsById(u_id)) {
             Good good=new Good();
@@ -156,6 +157,7 @@ public class GoodService implements IDGenenrator{
             good.setPrice(prize);
             good.setFreight(freight);
             good.setGoodState("待审核");
+            good.setShip_address(addr);
             goodRepo.save(good);
             setUrl(good.getId(),file);
             return ResultFactory.buildResult(200,"发布成功",null);
@@ -188,17 +190,18 @@ public class GoodService implements IDGenenrator{
     }
 
     public Result setGood(String g_id, String name,
-                                   String part, Integer inventory,
-                                   String info, Double prize, Double freight, MultipartFile file)
+                          String part, Integer inventory,String info,
+                          String addr,Double prize, Double freight, MultipartFile file)
     {
         if(goodRepo.existsById(g_id)) {
             Good good=goodRepo.findById(g_id).get();
-            if(!name.isEmpty()){good.setName(name);}
-            if(!part.isEmpty()){good.setPart(part);}
+            if(!name.isEmpty()&&!name.equals("")){good.setName(name);}
+            if(!part.isEmpty()&&!part.equals("")){good.setPart(part);}
             if(inventory>=0){good.setInventory(inventory);}
-            if(!info.isEmpty()){good.setInfo(info);}
+            if(!info.isEmpty()&&!info.equals("")){good.setInfo(info);}
             if(prize>0){good.setPrice(prize);}
             if(freight>=0){good.setFreight(freight);}
+            if(!addr.isEmpty()&&!addr.equals("")){good.setShip_address(addr);}
             goodRepo.save(good);
             if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
             good.setGoodState("待审核");
