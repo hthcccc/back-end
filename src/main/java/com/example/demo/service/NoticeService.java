@@ -48,10 +48,14 @@ public class NoticeService implements IDGenenrator{
             map.put("sender_id",notice.getSender_id());
             if(userRepo.existsById(notice.getSender_id())) {
                 map.put("sender_name", userRepo.findById(notice.getSender_id()).get().getName());
+            }else{
+                map.put("sender_name", notice.getSender_id());
             }
             map.put("receiver_id",notice.getReceiver_id());
             if(userRepo.existsById(notice.getReceiver_id())) {
                 map.put("receiver_name", userRepo.findById(notice.getReceiver_id()).get().getName());
+            }else {
+                map.put("receiver_name", notice.getReceiver_id());
             }
             map.put("date",notice.getDate());
             map.put("topic",notice.getTopic());
