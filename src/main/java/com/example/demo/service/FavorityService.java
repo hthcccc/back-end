@@ -46,6 +46,7 @@ public class FavorityService {
             map.put("price",good.getPrice());
             map.put("seller_id",good.getSellerId());
             map.put("seller_name",userRepo.findById(good.getSellerId()).get().getName());
+            map.put("good_state",good.getGoodState());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);

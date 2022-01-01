@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ApiGroup;
 import com.example.demo.model.History;
+import com.example.demo.result.Result;
 import com.example.demo.service.HistoryService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class historyController {
     @GetMapping("/getHistory/{user_id}")
     @ApiGroup(group = {"history"})
     @ApiOperation(value="获取用户浏览历史",notes = "用户id")
-    public List<History> getHistory(@PathVariable String user_id){
+    public Result getHistory(@PathVariable String user_id){
         return tmp.getHistory(user_id);
     }
 
