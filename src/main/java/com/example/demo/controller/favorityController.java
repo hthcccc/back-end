@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.ApiGroup;
+import com.example.demo.result.*;
 import com.example.demo.service.FavorityService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class favorityController {
     @GetMapping("/getAllFavourity/{user_id}")
     @ApiGroup(group = {"favority","user"})
     @ApiOperation(value = "获取用户所有收藏商品id",notes = "用户id")
-    public List<String> getAllFavourity(@PathVariable String user_id){
+    public Result getAllFavourity(@PathVariable String user_id){
         return tmp.getAllFavority(user_id);
     }
 
