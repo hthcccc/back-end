@@ -12,4 +12,5 @@ public interface ApiGroupInfo {
     String Favority="favority";
     String Notice="notice";
     String Admin="admin";
+    String Recommend="recommend";
 }

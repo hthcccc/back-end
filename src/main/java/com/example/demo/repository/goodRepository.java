@@ -18,6 +18,10 @@ public interface goodRepository  extends JpaRepository<Good,String>, JpaSpecific
     List<Good> getGoodByUser(String u_id);
 
     @Transactional//开启事务
+    @Query("select t from Good t join Recrecord r on t.id=r.goodId where t.sellerId=?1 and r.state='推广中'")
+    List<Good> getMyRecGoods(String u_id);
+
+    @Transactional//开启事务
     @Query("select t from Good t where t.name like %?1% and t.goodState='上架中'")
     List<Good> getGoodByName(String name);
 
