@@ -18,7 +18,7 @@ public class favorityController {
 
     @GetMapping("/getAllFavourity/{user_id}")
     @ApiGroup(group = {"favority","user"})
-    @ApiOperation(value = "获取用户所有收藏商品id",notes = "用户id")
+    @ApiOperation(value = "获取用户所有收藏商品",notes = "用户id")
     public Result getAllFavourity(@PathVariable String user_id){
         return tmp.getAllFavority(user_id);
     }
