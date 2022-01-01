@@ -16,11 +16,12 @@ public class noticeController {
 
     @PostMapping("/sendNotice")
     @ApiGroup(group = {"notice"})
-    @ApiOperation(value = "发送通知",notes = "发送方id，接收方id，文本信息")
+    @ApiOperation(value = "发送通知",notes = "发送方id，接收方id，标题，文本信息")
     public Result sendNotice(@RequestParam("sender_id") String sender_id,
                              @RequestParam("receiver_id") String receiver_id,
+                             @RequestParam("topic") String topic,
                              @RequestParam("text") String text){
-        return tmp.sendNotice(sender_id,receiver_id,text);
+        return tmp.sendNotice(sender_id,receiver_id,topic,text);
     }
 
     @PostMapping("/readNotice")

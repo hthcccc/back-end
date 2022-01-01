@@ -3,12 +3,13 @@ package com.example.demo.service;
 import com.example.demo.repository.*;
 import com.example.demo.result.*;
 import com.example.demo.model.Notice;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -18,11 +19,12 @@ public class NoticeService implements IDGenenrator{
     @Autowired
     noticeRepository noticeRepo;
 
-    public Result sendNotice(String sender,String receiver,String text){
+    public Result sendNotice(String sender,String receiver,String topic,String text){
         Notice notice=new Notice();
         notice.setId(generateID(24));
         notice.setSenderId(sender);
         notice.setReceiverId(receiver);
+        notice.setTopic(topic);
         notice.setDate(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
         notice.setText(text);
         notice.setIsread("0");
@@ -38,11 +40,51 @@ public class NoticeService implements IDGenenrator{
     }
 
     public Result getAllReceivedNotice(String receiver){
-        return ResultFactory.buildSuccessResult(noticeRepo.getAllReceivedNotice(receiver));
+        List<Notice> notices = noticeRepo.getAllReceivedNotice(receiver);
+        List<Map<String,Object>> result=new ArrayList<>();
+        for(Notice notice:notices){
+            Map<String,Object> map=new HashMap<>();
+            map.put("notice_id",notice.getId());
+            map.put("sender_id",notice.getSender_id());
+            if(userRepo.existsById(notice.getSender_id())) {
+                map.put("sender_name", userRepo.findById(notice.getSender_id()).get().getName());
+            }
+            map.put("receiver_id",notice.getReceiver_id());
+            if(userRepo.existsById(notice.getReceiver_id())) {
+                map.put("receiver_name", userRepo.findById(notice.getReceiver_id()).get().getName());
+            }
+            map.put("date",notice.getDate());
+            map.put("topic",notice.getTopic());
+            map.put("text",notice.getText());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public Result getAllSentNotice(String sender){
-        return ResultFactory.buildSuccessResult(noticeRepo.getAllSentNotice(sender));
+        List<Notice> notices = noticeRepo.getAllSentNotice(sender);
+        List<Map<String,Object>> result=new ArrayList<>();
+        for(Notice notice:notices){
+            Map<String,Object> map=new HashMap<>();
+            map.put("notice_id",notice.getId());
+            map.put("sender_id",notice.getSender_id());
+            if(userRepo.existsById(notice.getSender_id())) {
+                map.put("sender_name", userRepo.findById(notice.getSender_id()).get().getName());
+            }else{
+                map.put("sender_name", notice.getSender_id());
+            }
+            map.put("receiver_id",notice.getReceiver_id());
+            if(userRepo.existsById(notice.getReceiver_id())) {
+                map.put("receiver_name", userRepo.findById(notice.getReceiver_id()).get().getName());
+            }else {
+                map.put("receiver_name", notice.getReceiver_id());
+            }
+            map.put("date",notice.getDate());
+            map.put("topic",notice.getTopic());
+            map.put("text",notice.getText());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     @Override
