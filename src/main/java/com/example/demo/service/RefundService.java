@@ -1,19 +1,19 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Refund;
-import com.example.demo.model.TradeOrder;
-import com.example.demo.model.User;
-import com.example.demo.repository.goodRepository;
-import com.example.demo.repository.orderRepository;
-import com.example.demo.repository.refundRepository;
-import com.example.demo.repository.userRepository;
+import com.example.demo.model.*;
+import com.example.demo.repository.*;
 import com.example.demo.result.Result;
 import com.example.demo.result.ResultFactory;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
@@ -29,8 +29,14 @@ public class RefundService{
     orderRepository orderRepo;
     @Autowired
     userRepository userRepo;
+    @Autowired
+    refundUrlRepository urlRepo;
+    @Resource
+    MinioClient client;
 
-    public Result getAllArbitrtion(){
+    private final String refund_url="http://116.62.208.68:9000/refund/";
+
+    public Result getAllArbitrition(){
         Refund refund=new Refund();
         refund.setRefundState("待仲裁");
         Example<Refund> example=Example.of(refund);
@@ -47,7 +53,8 @@ public class RefundService{
             map.put("refund_time",refund.getRefund_time());
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
-            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("refund_urls",urlRepo.getUrlsByOrder(order.getId()));
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(refundRepo);
@@ -66,7 +73,9 @@ public class RefundService{
         result.put("refund_time",refund.getRefund_time());
         result.put("good_id",order.getGoodId());
         result.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
-        result.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
+        result.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
+        result.put("price",order.getPrice());
+        result.put("refund_urls",urlRepo.getUrlsByOrder(order_id));
         return ResultFactory.buildSuccessResult(result);
     }
 
@@ -102,7 +111,8 @@ public class RefundService{
             TradeOrder order=orderRepo.findById(refund.getId()).get();
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
-            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("price",order.getPrice());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
@@ -121,7 +131,8 @@ public class RefundService{
             TradeOrder order=orderRepo.findById(refund.getId()).get();
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
-            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("price",order.getPrice());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
@@ -177,7 +188,7 @@ public class RefundService{
         return ResultFactory.buildResult(200,"退款驳回",null);
     }
 
-    public Result submitArbitration(String order_id,String text){
+    public Result submitArbitration(String order_id, String text, MultipartFile file){
         if(!orderRepo.existsById(order_id)){return ResultFactory.buildFailResult("不存在该订单");}
         if(!refundRepo.existsById(order_id)){return ResultFactory.buildFailResult("不存在该退款");}
         TradeOrder order=orderRepo.getOne(order_id);
@@ -190,6 +201,48 @@ public class RefundService{
             refund.setText(text);
         }
         refundRepo.save(refund);
+        RefundUrl url=new RefundUrl();
+        try {
+            //上传照片到minio
+            if(!(file==null)&&!file.isEmpty()) {
+                client.putObject(
+                        PutObjectArgs.builder()
+                                .bucket("refund")
+                                .object(file.getOriginalFilename())
+                                .contentType(file.getContentType())
+                                .stream(file.getInputStream(),file.getSize(),-1)
+                                .build());
+
+                RefundUrlId urlId=new RefundUrlId(order_id,refund_url + file.getOriginalFilename());
+                url.setId(urlId);
+                urlRepo.save(url);
+            }
+        } catch (Exception e) {
+            System.out.println("上传失败");
+            return ResultFactory.buildFailResult("图片上传失败");
+        }
+        /*for(MultipartFile file:files){
+            RefundUrl url=new RefundUrl();
+            try {
+                //上传照片到minio
+                System.out.println(file.isEmpty());
+                if(!(file==null)&&!file.isEmpty()) {
+                    client.putObject(
+                            PutObjectArgs.builder()
+                                    .bucket("refund")
+                                    .object(file.getOriginalFilename())
+                                    .contentType(file.getContentType())
+                                    .stream(file.getInputStream(),file.getSize(),-1)
+                                    .build());
+                    RefundUrlId urlId=new RefundUrlId(order_id,refund_url + file.getOriginalFilename());
+                    url.setId(urlId);
+                    urlRepo.save(url);
+                }
+            } catch (Exception e) {
+                System.out.println("上传失败");
+                return ResultFactory.buildFailResult("图片上传失败");
+            }
+        }*/
         return ResultFactory.buildResult(200,"已提交仲裁",null);
     }
 
