@@ -28,6 +28,17 @@ public class Chat {
     @Column(name = "is_read", length = 2)
     private String isRead;
 
+    @Column(name = "group_id", length = 32)
+    private String group_id;
+
+    public String getGroup_id() {
+        return group_id;
+    }
+
+    public void setGroup_id(String group_id) {
+        this.group_id = group_id;
+    }
+
     public String getIsRead() {
         return isRead;
     }
