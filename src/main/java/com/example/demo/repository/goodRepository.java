@@ -56,11 +56,8 @@ public interface goodRepository  extends JpaRepository<Good,String>, JpaSpecific
     @Query("update Good g set g.goodState=?2 where g.id=?1")
     void setState(String good_id,String state);
 
-    @Query(value = "select * from good where good_id in (select good_id from(select count(order_id) ct,good.good_id from good left outer join trade_order on good.good_id=trade_order.good_id where good.good_state='上架中' group by(good.good_id) order by ct desc limit ?1) as t(ct,good_id))"
-            ,nativeQuery = true)
-    List<Good> getTop(Integer num);
+    @Query(value = "select good_id from(select count(order_id) ct,good.good_id,good.is_rec from good left outer join trade_order on good.good_id=trade_order.good_id where good_state='上架中' group by(good.good_id) order by is_rec desc,ct desc limit ?1) as t(ct,good_id,is_rec)",nativeQuery = true)
+    List<String> getTop(Integer num);
 
-    @Query("select count(o.id) AS ct,d.id from Good d left outer join TradeOrder o on d.id=o.goodId where d.goodState='上架中' group by(d.id) order by ct desc")
-    List<goodRank> getTop10Id();
 
 }

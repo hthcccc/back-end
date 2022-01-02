@@ -309,8 +309,8 @@ public class GoodService implements IDGenenrator{
     }
 
     public Result getTopX(Integer num){
-        List<Good> goodList=goodRepo.getTop(num);
-        return ResultFactory.buildSuccessResult(goodList);
+        List<String> ids=goodRepo.getTop(num);
+        return ResultFactory.buildSuccessResult(getGoodsByIds(ids));
     }
 
     public Result getGoodsByIds(List<String> idList){
