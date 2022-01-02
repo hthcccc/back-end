@@ -1,18 +1,21 @@
 package com.example.demo.model;
 
+import io.swagger.models.auth.In;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.Instant;
 
 @Table(name = "credit")
 @Entity
 public class Credit {
-    @Column(name = "uid")
+    @Column(name = "uid",length = 16)
     private String uid;
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id",length = 24)
     private String id;
 
     @Column(name = "name")
@@ -22,7 +25,7 @@ public class Credit {
     private String level;
 
     @Column(name="time")
-    private String time;
+    private Instant time;
 
     public String getUid() {
         return uid;
@@ -56,11 +59,11 @@ public class Credit {
         this.level = level;
     }
 
-    public String getTime() {
+    public Instant getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Instant time) {
         this.time = time;
     }
 }

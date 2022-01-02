@@ -308,8 +308,8 @@ public class GoodService implements IDGenenrator{
         return ResultFactory.buildFailResult("不存在该商品");
     }
 
-    public Result getTop10(){
-        List<Good> goodList=goodRepo.getTop10();
+    public Result getTopX(Integer num){
+        List<Good> goodList=goodRepo.getTop(num);
         return ResultFactory.buildSuccessResult(goodList);
     }
 

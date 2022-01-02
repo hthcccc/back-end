@@ -30,11 +30,11 @@ public class goodController {
         return tmp.getById(good_id);
     }
 
-    @GetMapping("/getTop10")
+    @GetMapping("/getTopX/{num}")
     @ApiGroup(group = {"good"})
-    @ApiOperation(value = "获取Top10商品")
-    public Result getTop10() {
-        return tmp.getTop10();
+    @ApiOperation(value = "获取TopX商品")
+    public Result getTopX(@PathVariable Integer num) {
+        return tmp.getTopX(num);
     }
 
     @Transactional

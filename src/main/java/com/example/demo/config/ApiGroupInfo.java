@@ -14,4 +14,5 @@ public interface ApiGroupInfo {
     String Admin="admin";
     String Recommend="recommend";
     String Chat="chat";
+    String Complaint="complaint";
 }
