@@ -47,6 +47,7 @@ public class RefundService{
             map.put("refund_time",refund.getRefund_time());
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(refundRepo);
@@ -65,6 +66,7 @@ public class RefundService{
         result.put("refund_time",refund.getRefund_time());
         result.put("good_id",order.getGoodId());
         result.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+        result.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
         return ResultFactory.buildSuccessResult(result);
     }
 
@@ -100,6 +102,7 @@ public class RefundService{
             TradeOrder order=orderRepo.findById(refund.getId()).get();
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
@@ -118,6 +121,7 @@ public class RefundService{
             TradeOrder order=orderRepo.findById(refund.getId()).get();
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
+            map.put("url",goodRepo.findById(order.getGoodId()).get().getUrl());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
