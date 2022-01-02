@@ -25,28 +25,31 @@ public class FavorityService {
     @Autowired
     goodRepository goodRepo;
 
-    public void addFavority(String user_id,String good_id){
+    public Result addFavority(String user_id,String good_id){
         if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
             FavorityId id=new FavorityId(user_id,good_id);
             if(!favorRepo.existsById(id)){
                 favorRepo.save(new Favority(id));
             }
         }
+        return ResultFactory.buildSuccessResult(null );
     }
 
-    public void removeFavority(String user_id,String good_id){
+    public Result removeFavority(String user_id,String good_id){
         if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
             FavorityId id=new FavorityId(user_id,good_id);
             if(favorRepo.existsById(id)){
                 favorRepo.delete(new Favority(id));
             }
         }
+        return ResultFactory.buildSuccessResult(null );
     }
 
-    public void removeMultiFavority(String user_id,String[] good_ids){
+    public Result removeMultiFavority(String user_id,String[] good_ids){
         for(String good_id:good_ids){
             this.removeFavority(user_id,good_id);
         }
+        return ResultFactory.buildSuccessResult(null );
     }
 
     public Result getAllFavority(String user_id){

@@ -45,12 +45,20 @@ public class HistoryService {
         return ResultFactory.buildSuccessResult(result);
     }
 
-    public void removeOneHistory(String user_id,String good_id){
+    public Result removeOneHistory(String user_id,String good_id){
+        if(!goodRepo.existsById(good_id)||!userRepo.existsById(user_id)){
+            return ResultFactory.buildFailResult("商品or用户不存在");
+        }
         historyRepo.removeOneHistory(user_id,good_id);
+        return ResultFactory.buildSuccessResult(null);
     }
 
-    public void removeAllHistory(String user_id){
+    public Result removeAllHistory(String user_id){
+        if(!userRepo.existsById(user_id)){
+            return ResultFactory.buildFailResult("用户不存在");
+        }
         historyRepo.removeAllHistory(user_id);
+        return ResultFactory.buildSuccessResult(null);
     }
 
 }

@@ -27,15 +27,15 @@ public class historyController {
     @PostMapping("/removeOneHistory")
     @ApiGroup(group = "history")
     @ApiOperation(value = "删除用户某条浏览记录",notes="用户id，商品id")
-    public void removeOneHistory(@RequestParam("user_id") String user_id,
+    public Result removeOneHistory(@RequestParam("user_id") String user_id,
                                  @RequestParam("good_id") String good_id){
-        tmp.removeOneHistory(user_id,good_id);
+        return tmp.removeOneHistory(user_id,good_id);
     }
 
     @PostMapping("/removeAllHistory")
     @ApiGroup(group = "history")
     @ApiOperation(value = "清空用户浏览记录",notes="用户id")
-    public void removeAllHistory(@RequestParam("user_id") String user_id){
-        tmp.removeAllHistory(user_id);
+    public Result removeAllHistory(@RequestParam("user_id") String user_id){
+        return tmp.removeAllHistory(user_id);
     }
 }

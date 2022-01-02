@@ -76,6 +76,11 @@ public class RefundService{
         result.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
         result.put("price",order.getPrice());
         result.put("refund_urls",urlRepo.getUrlsByOrder(order_id));
+        String isRefunding="y";
+        if(refund.getRefundState().equals("卖家批准")||refund.getRefundState().equals("仲裁批准")||refund.getRefundState().equals("仲裁驳回")){
+            isRefunding="n";
+        }
+        result.put("isRefunding",isRefunding);
         return ResultFactory.buildSuccessResult(result);
     }
 
@@ -113,6 +118,11 @@ public class RefundService{
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
             map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
             map.put("price",order.getPrice());
+            String isRefunding="y";
+            if(refund.getRefundState().equals("卖家批准")||refund.getRefundState().equals("仲裁批准")||refund.getRefundState().equals("仲裁驳回")){
+                isRefunding="n";
+            }
+            map.put("isRefunding",isRefunding);
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
