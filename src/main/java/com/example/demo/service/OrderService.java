@@ -105,7 +105,7 @@ public class OrderService implements IDGenenrator{
             order.setOrderState("未支付");
             order.setIsRefunding("n");
             orderRepo.save(order);
-            return ResultFactory.buildResult(200,"下单成功",null);
+            return ResultFactory.buildResult(200,"下单成功",order.getId());
         }
         return ResultFactory.buildFailResult("交易失败");
     }
