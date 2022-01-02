@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class recommendService implements IDGenenrator{
+public class RecommendService implements IDGenenrator{
     @Autowired
     recrecordRepository recrecordRepo;
     @Autowired
@@ -60,6 +60,7 @@ public class recommendService implements IDGenenrator{
         if(recrecordRepo.getUnpaidRec(good_id)!=null){
             return ResultFactory.buildFailResult("您有未支付的推广");
         }
+        Good good= goodRepo.findById(good_id).get();
         if(recrecordRepo.getCurrentByGoodId(good_id)!=null){
             Recrecord current=recrecordRepo.getCurrentByGoodId(good_id);
             Recplan recplan=recplanRepo.findById(current.getRecId()).get();
@@ -67,10 +68,11 @@ public class recommendService implements IDGenenrator{
                 return ResultFactory.buildFailResult("该商品已在推广");
             }else{
                 current.setState("已过期");
+                good.setIsRec("0");
+                goodRepo.save(good);
                 recrecordRepo.save(current);
             }
         }
-        Good good=goodRepo.findById(good_id).get();
         if(!good.getGoodState().equals("上架中")){
             return ResultFactory.buildFailResult("商品未上架");
         }
@@ -100,6 +102,8 @@ public class recommendService implements IDGenenrator{
             user.setBalance(user.getBalance()-recplanRepo.findById(record.getRecId()).get().getCost());
             record.setStartTime(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
             record.setState("推广中");
+            good.setIsRec("1");
+            goodRepo.save(good);
             return ResultFactory.buildResult(200,"支付成功",null);
         }else{
             return ResultFactory.buildFailResult("余额不足");

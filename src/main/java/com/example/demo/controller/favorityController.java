@@ -29,4 +29,18 @@ public class favorityController {
     public void addFavority(String user_id,String good_id){
         tmp.addFavority(user_id,good_id);
     }
+
+    @PostMapping("/removeFavority")
+    @ApiGroup(group = {"favority"})
+    @ApiOperation(value = "从收藏夹移除商品",notes = "用户id，商品id")
+    public void removeFavority(String user_id,String good_id){
+        tmp.removeFavority(user_id,good_id);
+    }
+
+    @PostMapping("/removeMultiFavority")
+    @ApiGroup(group = {"favority"})
+    @ApiOperation(value = "从收藏夹批量移除商品",notes = "用户id，商品id列表")
+    public void removeMultiFavority(String user_id,String[] good_ids){
+        tmp.removeMultiFavority(user_id,good_ids);
+    }
 }

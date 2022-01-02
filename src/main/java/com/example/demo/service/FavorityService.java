@@ -34,6 +34,21 @@ public class FavorityService {
         }
     }
 
+    public void removeFavority(String user_id,String good_id){
+        if(userRepo.existsById(user_id)&&goodRepo.existsById(good_id)){
+            FavorityId id=new FavorityId(user_id,good_id);
+            if(favorRepo.existsById(id)){
+                favorRepo.delete(new Favority(id));
+            }
+        }
+    }
+
+    public void removeMultiFavority(String user_id,String[] good_ids){
+        for(String good_id:good_ids){
+            this.removeFavority(user_id,good_id);
+        }
+    }
+
     public Result getAllFavority(String user_id){
         List<String> favorities = favorRepo.getAllFavority(user_id);
         List<Map<String,Object>> result=new ArrayList<>();

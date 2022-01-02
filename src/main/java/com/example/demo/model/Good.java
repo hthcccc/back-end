@@ -40,6 +40,17 @@ public class Good {
     @Column(name="ship_address")
     private String ship_address;
 
+    @Column(name="is_rec",length = 2)
+    private String isRec;
+
+    public String getIsRec() {
+        return isRec;
+    }
+
+    public void setIsRec(String isRec) {
+        this.isRec = isRec;
+    }
+
     public String getShip_address() {
         return ship_address;
     }

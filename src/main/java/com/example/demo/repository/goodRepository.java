@@ -22,14 +22,14 @@ public interface goodRepository  extends JpaRepository<Good,String>, JpaSpecific
     List<Good> getMyRecGoods(String u_id);
 
     @Transactional//开启事务
-    @Query("select t from Good t where t.name like %?1% and t.goodState='上架中'")
+    @Query("select t from Good t where t.name like %?1% and t.goodState='上架中' order by t.isRec desc")
     List<Good> getGoodByName(String name);
 
     @Transactional//开启事务
-    @Query("select t from Good t where t.part=?1 and t.goodState='上架中'")
+    @Query("select t from Good t where t.part=?1 and t.goodState='上架中' order by t.isRec desc")
     List<Good> getGoodByPart(String part);
 
-    @Query("select t from Good t where t.part=?1 and t.goodState='上架中'")
+    @Query("select t from Good t where t.part=?1 and t.goodState='上架中' order by t.isRec DESC")
     Page<Good> getGoodPagedByPart(Pageable pageable, String part);
 
     @Transactional

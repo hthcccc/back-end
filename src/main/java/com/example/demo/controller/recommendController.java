@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ApiGroup;
 import com.example.demo.result.Result;
-import com.example.demo.service.recommendService;
+import com.example.demo.service.RecommendService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/recommend")
 public class recommendController {
     @Autowired
-    recommendService tmp;
+    RecommendService tmp;
 
     @Transactional
     @GetMapping("/getAllRecPlans")
@@ -29,6 +29,14 @@ public class recommendController {
     @ApiOperation(value = "获取该用户所有正在推广的商品及推广信息",notes ="用户id" )
     public Result getMyCurrentRecs(@PathVariable String user_id){
         return tmp.getMyCurrentRecs(user_id);
+    }
+
+    @Transactional
+    @GetMapping("/getHistoryRecsByGoodID/{good_id}")
+    @ApiGroup(group = {"recommend"})
+    @ApiOperation(value = "获取该商品的历史推广",notes ="商品id" )
+    public Result getHistoryRecsByGoodID(@PathVariable String good_id){
+        return tmp.getHistoryRecsByGoodID(good_id);
     }
 
     @Transactional

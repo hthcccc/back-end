@@ -66,7 +66,7 @@ public class GoodService implements IDGenenrator{
             result.put("inventory",good.getInventory());
             result.put("good_state",good.getGoodState());
             result.put("part",good.getPart());
-
+            result.put("isRec",good.getIsRec());
             return ResultFactory.buildSuccessResult(result);
         }
         return ResultFactory.buildFailResult("该商品不存在");
@@ -134,12 +134,7 @@ public class GoodService implements IDGenenrator{
 
     public Result getAllPart() {
         List<Part> partList=partRepo.findAll();
-        List<String> result = new ArrayList<String>();
-        for(Part p : partList){
-            result.add(p.getPart());
-        }
-        return ResultFactory.buildSuccessResult(result);
-        //return partlist;
+        return ResultFactory.buildSuccessResult(partList);
     }
 
     public Result releaseGood(String u_id,String name,
@@ -158,6 +153,7 @@ public class GoodService implements IDGenenrator{
             good.setFreight(freight);
             good.setGoodState("待审核");
             good.setShip_address(addr);
+            good.setIsRec("0");
             goodRepo.save(good);
             setUrl(good.getId(),file);
             return ResultFactory.buildResult(200,"发布成功",null);
@@ -186,7 +182,9 @@ public class GoodService implements IDGenenrator{
             exampleMatcher=exampleMatcher.withMatcher("goodState",ExampleMatcher.GenericPropertyMatchers.exact());
         }
         Example<Good> example = Example.of(good,exampleMatcher);
-        return ResultFactory.buildSuccessResult(goodRepo.findAll(example));
+        Sort sort = Sort.sort(Good.class).descending();
+        sort.getOrderFor("isRec");
+        return ResultFactory.buildSuccessResult(goodRepo.findAll(example,sort));
     }
 
     public Result setGood(String g_id, String name,
