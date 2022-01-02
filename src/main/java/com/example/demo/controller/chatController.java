@@ -28,7 +28,7 @@ public class chatController {
     @Transactional
     @PostMapping("/readChat")
     @ApiGroup(group = {"chat"})
-    @ApiOperation(value = "查看user1与user2的所有私信记录",notes = "用户1的id，用户2的id")
+    @ApiOperation(value = "user1查看与user2的所有私信记录",notes = "用户1的id，用户2的id")
     public Result readChat(@RequestParam("user1") String user1,
                              @RequestParam("user2") String user2){
         return tmp.readChat(user1, user2);

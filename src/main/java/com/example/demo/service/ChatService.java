@@ -32,7 +32,7 @@ public class ChatService{
         if(groupId==null||groupId.isEmpty()||groupId.equals("")||groupId.equals("null")){
             return ResultFactory.buildFailResult("暂无建立聊天组");
         }
-        chatRepo.setIsRead(groupId);
+        chatRepo.setIsRead(groupId,user1);
         List<Chat>chats = chatRepo.getChatsByGroup(groupId);
         List<Map<String,Object>> result=new ArrayList<>();
         for(Chat chat:chats){
@@ -45,7 +45,7 @@ public class ChatService{
             map.put("isRead",chat.getIsRead());
             map.put("chat_id",chat.getId());
             map.put("group_id",chat.getGroup_id());
-            map.put("text",chat.getTime());
+            map.put("time",chat.getTime());
             result.add(map);
         }
         return ResultFactory.buildSuccessResult(result);
