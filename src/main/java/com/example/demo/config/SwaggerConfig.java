@@ -104,6 +104,11 @@ public class SwaggerConfig /*implements WebMvcConfigurer*/ {
         return createBean(ApiGroupInfo.Complaint,"complaintApi", ApiGroupInfo.VERSION);
     }
 
+    @Bean
+    public Docket reportAPI(){
+        return createBean(ApiGroupInfo.Report,"reportApi", ApiGroupInfo.VERSION);
+    }
+
     // 通过注解进行分组
     private Docket createBean(String groupName,String desc,String version){
         return new Docket(DocumentationType.SWAGGER_2)
