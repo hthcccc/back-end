@@ -136,7 +136,11 @@ public class RefundService{
             Map<String,Object> map=new HashMap<>();
             map.put("order_id",refund.getId());
             map.put("text",refund.getText());
-            map.put("refund_state",refund.getRefundState());
+            String refund_state=refund.getRefundState();
+            if (refund_state.equals("待仲裁")||refund_state.equals("仲裁批准")||refund_state.equals("仲裁驳回")){
+                refund_state="卖家驳回";
+            }
+            map.put("refund_state",refund_state);
             map.put("refund_time",refund.getRefund_time());
             TradeOrder order=orderRepo.findById(refund.getId()).get();
             map.put("good_id",order.getGoodId());
