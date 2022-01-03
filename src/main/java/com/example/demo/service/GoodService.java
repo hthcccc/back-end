@@ -116,7 +116,26 @@ public class GoodService implements IDGenenrator{
 
     public Result getGoodOnShellByPart(String part){
         if(partRepo.existsById(part)){
-            return ResultFactory.buildSuccessResult(goodRepo.getGoodByPart(part));
+            List<Good> goods=goodRepo.getGoodByPart(part);
+            List<Map<String,Object>> result=new ArrayList<>();
+            for(Good good:goods){
+                Map<String,Object> map=new HashMap<>();
+                map.put("good_id",good.getId());
+                map.put("good_name",good.getName());
+                map.put("good_url",good.getUrl());
+                map.put("part",good.getPart());
+                map.put("info",good.getInfo());
+                map.put("seller_id",good.getSellerId());
+                map.put("seller_name",userRepo.findById(good.getSellerId()).get().getName());
+                map.put("price",good.getPrice());
+                map.put("good_state",good.getGoodState());
+                map.put("freight",good.getFreight());
+                map.put("ship_address",good.getShip_address());
+                map.put("inventory",good.getInventory());
+                map.put("is_rec",good.getIsRec());
+                result.add(map);
+            }
+            return ResultFactory.buildSuccessResult(result);
         }
         return ResultFactory.buildFailResult("不存在该分区");
     }
@@ -226,7 +245,26 @@ public class GoodService implements IDGenenrator{
 
     public Result getGoodOnShellByName(String name)
     {
-        return ResultFactory.buildSuccessResult(goodRepo.getGoodByName(name));
+        List<Good> goods=goodRepo.getGoodByName(name);
+        List<Map<String,Object>> result=new ArrayList<>();
+        for(Good good:goods){
+            Map<String,Object> map=new HashMap<>();
+            map.put("good_id",good.getId());
+            map.put("good_name",good.getName());
+            map.put("good_url",good.getUrl());
+            map.put("part",good.getPart());
+            map.put("info",good.getInfo());
+            map.put("seller_id",good.getSellerId());
+            map.put("seller_name",userRepo.findById(good.getSellerId()).get().getName());
+            map.put("price",good.getPrice());
+            map.put("good_state",good.getGoodState());
+            map.put("freight",good.getFreight());
+            map.put("ship_address",good.getShip_address());
+            map.put("inventory",good.getInventory());
+            map.put("is_rec",good.getIsRec());
+            result.add(map);
+        }
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public String getUrl(String g_id)

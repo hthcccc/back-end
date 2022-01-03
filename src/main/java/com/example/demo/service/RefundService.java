@@ -48,16 +48,16 @@ public class RefundService{
             Map<String,Object> map=new HashMap<>();
             TradeOrder order=orderRepo.findById(refund1.getId()).get();
             map.put("order_id",order.getId());
-            map.put("text",refund.getText());
-            map.put("refund_state",refund.getRefundState());
-            map.put("refund_time",refund.getRefund_time());
+            map.put("text",refund1.getText());
+            map.put("refund_state",refund1.getRefundState());
+            map.put("refund_time",refund1.getRefund_time());
             map.put("good_id",order.getGoodId());
             map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
             map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
             map.put("refund_urls",urlRepo.getUrlsByOrder(order.getId()));
             result.add(map);
         }
-        return ResultFactory.buildSuccessResult(refundRepo);
+        return ResultFactory.buildSuccessResult(result);
     }
 
     public Result getRefundInfo(String order_id){
