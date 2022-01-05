@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 
 enum goodstate{
-    待审核,上架中,已下架,缺货;
+    待审核,上架中,已下架,待整改;
 
     public static boolean isGoodState(String state)
     {
@@ -212,6 +212,12 @@ public class GoodService implements IDGenenrator{
     {
         if(goodRepo.existsById(g_id)) {
             Good good=goodRepo.findById(g_id).get();
+            if(good.getGoodState().equals("已下架")){
+                return ResultFactory.buildFailResult("商品已下架");
+            }
+            if(good.getGoodState().equals("待审核")){
+                return ResultFactory.buildFailResult("商品待审核");
+            }
             if(!name.isEmpty()&&!name.equals("")){good.setName(name);}
             if(!part.isEmpty()&&!part.equals("")){good.setPart(part);}
             if(inventory>=0){good.setInventory(inventory);}
@@ -219,9 +225,9 @@ public class GoodService implements IDGenenrator{
             if(prize>0){good.setPrice(prize);}
             if(freight>=0){good.setFreight(freight);}
             if(!addr.isEmpty()&&!addr.equals("")){good.setShip_address(addr);}
+            good.setGoodState("待审核");
             goodRepo.save(good);
             if(!(file==null)&&!file.isEmpty()){this.setUrl(g_id,file);}
-            good.setGoodState("待审核");
             return ResultFactory.buildResult(200,"修改商品成功，需要重新审核",null);
         }
         return ResultFactory.buildFailResult("不存在该商品");
@@ -304,6 +310,7 @@ public class GoodService implements IDGenenrator{
                     return ResultFactory.buildSuccessResult(null);
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 System.out.println("上传失败");
                 return ResultFactory.buildFailResult("图片上传失败");
             }
@@ -336,11 +343,22 @@ public class GoodService implements IDGenenrator{
         return false;
     }
 
-    public Result allowGood(String good_id){
+    public Result allowGood(String good_id,String plan_id){
         if(goodRepo.existsById(good_id)){
-            if(goodRepo.findById(good_id).get().getGoodState().equals("待审核")){
-                goodRepo.setState(good_id,"上架中");
-                return ResultFactory.buildResult(200,"批准上架",null);
+            Good good=goodRepo.findById(good_id).get();
+            if(good.getGoodState().equals("待审核")){
+                if(plan_id.equals("0")){
+                    goodRepo.setState(good_id, "下架中");
+                    return ResultFactory.buildResult(201, "商品下架", null);
+                }else if(plan_id.equals("1")) {
+                    goodRepo.setState(good_id, "上架中");
+                    return ResultFactory.buildResult(200, "批准上架", null);
+                }else{
+                    goodRepo.setState(good_id, "待整改");
+                    return ResultFactory.buildResult(202, "还需整改", null);
+                }
+            }else{
+                return ResultFactory.buildFailResult("商品未提交审核");
             }
         }
         return ResultFactory.buildFailResult("不存在该商品");

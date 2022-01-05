@@ -29,7 +29,7 @@ public class orderController {
     @GetMapping("/getAllBySeller/{user_id}")
     @ApiGroup(group = {"order","user"})
     @ApiOperation(value="得到该用户卖出物品的所有订单",notes = "卖家id")
-    public Result getAllByseller(@PathVariable String user_id){
+    public Result getAllBySeller(@PathVariable String user_id){
         return tmp.getAllBySeller(user_id);
     }
 
