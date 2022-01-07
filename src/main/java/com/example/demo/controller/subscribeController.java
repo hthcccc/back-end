@@ -29,4 +29,11 @@ public class subscribeController {
     public void addSubscribe(@RequestParam("user_id") String user_id,@RequestParam("subscribed_id") String subscribed_id){
         tmp.addSubscribe(user_id,subscribed_id);
     }
+
+    @PostMapping("/removeSubscribe")
+    @ApiGroup(group = {"subscribe"})
+    @ApiOperation(value = "取消关注",notes="用户id，被关注的id")
+    public void removeSubscribe(@RequestParam("user_id") String user_id,@RequestParam("subscribed_id") String subscribed_id){
+        tmp.removeSubscribe(user_id,subscribed_id);
+    }
 }
