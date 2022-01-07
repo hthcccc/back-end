@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -48,13 +50,15 @@ public class AdminService implements IDGenenrator{
 
     public Result checkPasswordById(String id,String pwd){
         if (!adminRepo.existsById(id)){return ResultFactory.buildFailResult("管理员id不存在");}
+        Map<String,Object> returnInfo=new HashMap<>();
         Admin admin= adminRepo.findById(id).get();
         String real_pwd=admin.getPassword();
         String en_pwd=Encryption.shiroEncryption(pwd,admin.getSalt());
         if(Encryption.shiroEncryption(pwd,admin.getSalt()).equals(admin.getPassword())){
             String token= TokenUse.sign(id,pwd,"admin");
             if(token!=null){
-                return ResultFactory.buildResult(201,token,null);
+                returnInfo.put("id",id);
+                return ResultFactory.buildResult(201,token,returnInfo);
             }else {
                 return ResultFactory.buildResult(400,"Token签发失败",null);
             }

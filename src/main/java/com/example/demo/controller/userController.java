@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.controller.requestBody.*;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins="*")
 @RestController("user")
@@ -53,7 +54,7 @@ public class userController {
     @PostMapping("/loginByToken")
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "利用token校验用户id和密码，并返回token",notes = "用户id，密码")
-    public String loginByToken(@RequestBody String token){
+    public Result loginByToken(@RequestBody String token){
         return tmp.checkPasswordByToken(token);
     }
 

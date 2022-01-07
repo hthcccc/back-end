@@ -25,8 +25,8 @@ public class refundController {
     @GetMapping("/getAllArbitritions")
     @ApiGroup(group = {"refund","admin"})
     @ApiOperation(value = "管理员获取所有待仲裁的退款，按照退款发起时间升序列出")
-    public Result getAllArbitritions() {
-        return tmp.getAllArbitrition();
+    public Result getAllArbitration() {
+        return tmp.getAllArbitration();
     }
 
     @Transactional
@@ -81,7 +81,7 @@ public class refundController {
     @PostMapping("/refuseArbitition")
     @ApiGroup(group = {"refund","admin"})
     @ApiOperation(value = "仲裁驳回",notes = "订单id")
-    public Result refuseArbitrition(@RequestParam("order_id") String order_id){
+    public Result refuseArbitration(@RequestParam("order_id") String order_id){
         return tmp.refuseArbitration(order_id);
     }
 
@@ -89,16 +89,16 @@ public class refundController {
     @PostMapping("/permitArbitition")
     @ApiGroup(group = {"refund","admin"})
     @ApiOperation(value = "仲裁批准",notes = "订单id")
-    public Result permitArbitrition(@RequestParam("order_id") String order_id){
+    public Result permitArbitration(@RequestParam("order_id") String order_id){
         return tmp.permitArbitration(order_id);
     }
 
     @Transactional
     @PostMapping(value = "/submitArbitition")
-    //@RequestMapping(value = "/submitArbitition", method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //@RequestMapping(value = "/submitArbitation", method = RequestMethod.POST,consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiGroup(group = {"refund"})
     @ApiOperation(value = "提交仲裁申请",notes = "订单id，仲裁理由，图片")
-    public Result submitArbitrition(@RequestParam("order_id") String order_id,
+    public Result submitArbitration(@RequestParam("order_id") String order_id,
                                     @RequestParam("text") String text,
                                     @RequestParam("file") MultipartFile file){
         System.out.println("尝试提交仲裁");

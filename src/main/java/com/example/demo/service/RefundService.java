@@ -36,7 +36,7 @@ public class RefundService{
 
     private final String refund_url="http://116.62.208.68:9000/refund/";
 
-    public Result getAllArbitrition(){
+    public Result getAllArbitration(){
         Refund refund=new Refund();
         refund.setRefundState("待仲裁");
         Example<Refund> example=Example.of(refund);
