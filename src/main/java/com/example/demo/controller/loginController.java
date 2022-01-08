@@ -30,7 +30,10 @@ public class loginController {
             return userService.checkPasswordById(id,password);
         }else if(adminService.existsAdmin(id)){
             return adminService.checkPasswordById(id,password);
-        }else{
+        }else if(userService.existsPhone(id)){
+            return userService.checkPhoneAndPwd(id,password);
+        }
+        else{
             return ResultFactory.buildFailResult("不存在该id");
         }
     }
@@ -60,8 +63,7 @@ public class loginController {
     @ApiGroup(group = {"user"})
     @ApiOperation(value = "校验短信验证码，如果手机号未绑定就注册新账号", notes = "手机号")
     public Result checkPhone(@RequestParam("phone") String phone,
-                             @RequestParam("code") String code,
-                             @RequestParam("name") String name){
-        return msgService.checkPhone(phone,code,name);
+                             @RequestParam("code") String code){
+        return msgService.checkPhone(phone,code);
     }
 }

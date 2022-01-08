@@ -21,17 +21,25 @@ public class Admin {
     @Column(name = "sex")
     private String sex;
 
-    @Column(name = "phone")
-    private String phone;
-
     @Column(name = "mail", nullable = false, length = 32)
     private String mail;
 
     @Column(name = "password", length = 32)
     private String password;
 
+    @Column(name = "phone", length = 11)
+    private String phone;
+
     @Column(name = "salt", length = 24)
     private String salt;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
     public String getSalt() {
         return salt;
@@ -71,14 +79,6 @@ public class Admin {
 
     public void setAge(Integer age) {
         this.age = age;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public String getName() {

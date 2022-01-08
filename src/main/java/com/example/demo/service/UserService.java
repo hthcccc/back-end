@@ -295,6 +295,29 @@ public class UserService implements IDGenenrator{
         }
         return true;
     }
+
+    public String getIdByPhone(String phone){
+        if(existsPhone(phone)){
+            return userRepo.getUserByPhone(phone).get(0).getUserId();
+        }
+        return null;
+    }
+
+    public Result checkPhoneAndPwd(String phone,String pwd){
+        String user_id=getIdByPhone(phone);
+        if(user_id==null||user_id.isEmpty()||user_id.equals(""))
+        {
+            return ResultFactory.buildFailResult("该手机号未绑定账号");
+        }
+        User user=userRepo.getUserByPhone(phone).get(0);
+        if(Encryption.shiroEncryption(pwd,user.getSalt()).equals(user.getPassword())){
+            return ResultFactory.buildResult(200,"用户登录成功",user_id);
+        }
+        else {
+            return ResultFactory.buildFailResult("用户密码错误");
+        }
+    }
+
     public boolean checkCode(String phone,String code){
         if(verificationRepo.existsById(phone)&&code.equals(verificationRepo.findById(phone).get().getCode())&&!isOverdue(phone)){
             return true;
@@ -327,6 +350,7 @@ public class UserService implements IDGenenrator{
         userRepo.save(user);
         return ResultFactory.buildSuccessResult(id);
     }
+
     public Result resetPassword(String phone,String pwd,String code) {
         if(!verificationRepo.existsById(phone)){
             return ResultFactory.buildFailResult("您还未发送验证码，请点击发送验证码。");

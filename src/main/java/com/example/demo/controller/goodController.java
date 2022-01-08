@@ -15,7 +15,7 @@ import com.example.demo.result.*;
 
 import java.util.List;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins="*",methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 @RestController("good")
 @RequestMapping("/good")
 public class goodController {
@@ -137,10 +137,10 @@ public class goodController {
     @ApiGroup(group = {"good"})
     @ApiOperation(value = "设置商品属性（不包括状态）",notes = "商品id，商品名称，商品分区，商品库存，商品信息，发货地址，商品价格，运费，图片")
     public Result setGood(@RequestParam("good_id") String good_id,
-                        @RequestParam("name") String name,
-                        @RequestParam("part") String part,
+                        @RequestParam(value = "name",required = false) String name,
+                        @RequestParam(value = "part",required = false) String part,
                         @RequestParam("inventory") Integer inventory,
-                        @RequestParam("info") String info,
+                        @RequestParam(value = "info",required = false) String info,
                         @RequestParam("addr") String addr,
                         @RequestParam("price") Double price,
                         @RequestParam("freight") Double freight,

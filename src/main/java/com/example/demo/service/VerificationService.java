@@ -79,24 +79,26 @@ public class VerificationService implements IDGenenrator {
         return false;
     }
 
-    public Result checkPhone(String phone,String code,String uid){
+    public Result checkPhone(String phone,String code){//String uid
         if(!verificationRepo.existsById(phone)){
             return ResultFactory.buildFailResult("请点击发送验证码");
         }
         if(checkCode(phone,code)){
-            if(userRepo.existsById(uid)) {
+            /*if(userRepo.existsById(uid)) {
                 return ResultFactory.buildResult(400,"用户名已经存在",null);
-            }
+            }*/
             if(userRepo.existsByPhone(phone)==0){
                 User user=new User();
-                //user.setUserId(generateID(16));
-                user.setUserId(uid);
+                user.setUserId(generateID(16));
+                user.setName("未取名用户");
+                //user.setUserId(uid);
                 user.setPhone(phone);
                 user.setBalance(0.0);
                 userRepo.save(user);
                 return ResultFactory.buildResult(200,"新用户注册成功",user.getUserId());
             }
-            return ResultFactory.buildResult(200,"验证成功",null);
+            String id=userRepo.getUserByPhone(phone).get(0).getUserId();
+            return ResultFactory.buildResult(200,"验证成功",id);
         }else{
             return ResultFactory.buildFailResult("验证失败");
         }
@@ -146,7 +148,7 @@ public class VerificationService implements IDGenenrator {
              * 相应的依赖请参照
              * https://github.com/aliyun/api-gateway-demo-sign-java/blob/master/pom.xml
              */
-            //HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
+            HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
             //System.out.println(response.toString());
             System.out.println(code);
             insertOrReplace(phone,code);

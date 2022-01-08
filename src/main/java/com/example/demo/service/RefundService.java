@@ -47,13 +47,18 @@ public class RefundService{
         for (Refund refund1:refunds){
             Map<String,Object> map=new HashMap<>();
             TradeOrder order=orderRepo.findById(refund1.getId()).get();
+            Good good=goodRepo.findById(order.getGoodId()).get();
             map.put("order_id",order.getId());
             map.put("text",refund1.getText());
             map.put("refund_state",refund1.getRefundState());
             map.put("refund_time",refund1.getRefund_time());
             map.put("good_id",order.getGoodId());
-            map.put("good_name",goodRepo.findById(order.getGoodId()).get().getName());
-            map.put("good_url",goodRepo.findById(order.getGoodId()).get().getUrl());
+            map.put("good_name",good.getName());
+            map.put("good_url",good.getUrl());
+            map.put("seller_id",good.getSellerId());
+            map.put("seller_name",userRepo.findById(good.getSellerId()).get().getName());
+            map.put("buyer_id",order.getBuyerId());
+            map.put("buyer_name",userRepo.findById(order.getBuyerId()).get().getName());
             map.put("refund_urls",urlRepo.getUrlsByOrder(order.getId()));
             result.add(map);
         }
