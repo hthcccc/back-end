@@ -136,4 +136,64 @@ class GoodServiceTest {
         Assert.assertEquals("玩具",part);
         Assert.assertTrue(inventory==inventory_origin);
     }
+
+    @Transactional
+    @Test
+    void allowGood(){
+        //测试待审核用例
+        String good_id = "0840289660372971";
+        //测试上架后状态
+        goodService.allowGood(good_id,"1");
+        Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        String good_state = result.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state);
+
+        //测试待整改用例
+        good_id = "4028936603729721";
+        //测试上架后状态
+        goodService.allowGood(good_id,"1");
+        result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        good_state = result.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state);
+    }
+
+    @Transactional
+    @Test
+    void takeDownGood(){
+        //测试用例
+        String good_id = "0840289660372971";
+        //测试上架后状态
+        goodService.allowGood(good_id,"0");
+        Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        String  good_state =  result.get("good_state").toString();
+        Assert.assertEquals("已下架",good_state);
+
+        //测试待整改用例
+        good_id = "4028936603729721";
+        //测试上架后状态
+        goodService.allowGood(good_id,"1");
+        result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        good_state = result.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state);
+    }
+
+    @Transactional
+    @Test
+    void requireGoodForSetting(){
+        //测试用例
+        String good_id = "0840289660372971";
+        //测试上架后状态
+        goodService.allowGood(good_id,"2");
+        Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        String  good_state =  result.get("good_state").toString();
+        Assert.assertEquals("待整改",good_state);
+
+        //测试待整改用例
+        good_id = "4028936603729721";
+        //测试上架后状态
+        goodService.allowGood(good_id,"1");
+        result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        good_state = result.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state);
+    }
 }
