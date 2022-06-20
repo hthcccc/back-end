@@ -348,13 +348,13 @@ public class GoodService implements IDGenenrator{
             Good good=goodRepo.findById(good_id).get();
             if(good.getGoodState().equals("待审核")||good.getGoodState().equals("待整改")){
                 if(plan_id.equals("0")){
-                    goodRepo.setState(good_id, "已下架");
+                    setGoodState(good_id, "已下架");
                     return ResultFactory.buildResult(201, "商品下架", null);
                 }else if(plan_id.equals("1")) {
-                    goodRepo.setState(good_id, "上架中");
+                    setGoodState(good_id, "上架中");
                     return ResultFactory.buildResult(200, "批准上架", null);
                 }else{
-                    goodRepo.setState(good_id, "待整改");
+                    setGoodState(good_id, "待整改");
                     return ResultFactory.buildResult(202, "还需整改", null);
                 }
             }else{
