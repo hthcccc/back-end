@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,6 +28,8 @@ class OrderServiceTest {
     RefundService refundService;
     @Autowired
     UserService userService;
+    @Autowired
+    GoodService goodService;
 
     @Test
     void getOrderInfo() {
@@ -89,6 +92,14 @@ class OrderServiceTest {
     void payOrder(){
         //测试正常情况
         payOrderNormal();
+        //测试已支付的订单
+        payOrderAgain();
+        //测试库存不足
+        payOrderInventoryNotEnough();
+        //测试余额不足
+        payOrderBalanceNotEnough();
+        //测试购买下架商品
+        payOrderGoodNotOnShell();
     }
 
     @Transactional
@@ -96,21 +107,137 @@ class OrderServiceTest {
     void payOrderNormal() {
         //测试正常用例
         String order_id = "0277495394409761";
-        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo("0277495394409761").getObject();
+        //获取支付前状态
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Map<String,Object> good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
         Double balance_before = user.getBalance();
         Double price = (Double) order.get("price");
+        Integer num = (Integer) order.get("num");
+        Integer inventory_before = (Integer) good.get("inventory");
 
+        //获取支付后状态
         Assert.assertEquals(200,orderService.payOrder(order_id).getCode());
-        order =(Map<String,Object>) orderService.getOrderInfo("0277495394409761").getObject();
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
         Double balance_after = user.getBalance();
-        System.out.println(balance_before-price);
-        System.out.println(balance_after);
+        Integer inventory_after = (Integer) good.get("inventory");
+        System.out.println(inventory_before-num);
+        System.out.println(inventory_after);
         Assert.assertEquals("待发货",order.get("order_state").toString());
-        Assert.assertTrue((double) (balance_before-price)==(double)balance_after);
+        Assert.assertTrue( (balance_before-price)==balance_after);
+        Assert.assertTrue((inventory_before-num)==inventory_after);
+    }
 
+    @Transactional
+    @Test
+    void payOrderAgain(){
+        //测试已经支付的订单
+        String order_id = "2077079906043517";
 
+        //获取支付前状态
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Map<String,Object> good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_before = user.getBalance();
+        String order_state = order.get("order_state").toString();
+        Integer inventory_before = (Integer) good.get("inventory");
+
+        //获取支付后状态
+        Assert.assertEquals(400,orderService.payOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_after = user.getBalance();
+        Integer inventory_after = (Integer) good.get("inventory");
+        System.out.println(balance_before);
+        System.out.println(balance_after);
+        Assert.assertEquals(order_state,order.get("order_state").toString());
+        Assert.assertTrue(balance_before.equals(balance_after));
+        Assert.assertTrue(Objects.equals(inventory_before, inventory_after));
+
+    }
+
+    @Transactional
+    @Test
+    void payOrderInventoryNotEnough(){
+        //测试库存不足
+        String order_id = "8284852149786761";
+
+        //获取支付前状态
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Map<String,Object> good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_before = user.getBalance();
+        String order_state = order.get("order_state").toString();
+        Integer inventory_before = (Integer) good.get("inventory");
+
+        //获取支付后状态
+        Assert.assertTrue(inventory_before<(Integer) order.get("num"));
+        Assert.assertEquals(400,orderService.payOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_after = user.getBalance();
+        Integer inventory_after = (Integer) good.get("inventory");
+        Assert.assertEquals(order_state,order.get("order_state").toString());
+        Assert.assertTrue(balance_before.equals(balance_after));
+        Assert.assertTrue(Objects.equals(inventory_before, inventory_after));
+    }
+
+    @Transactional
+    @Test
+    void payOrderBalanceNotEnough(){
+        //测试余额不足
+        String order_id = "6761311923331669";
+
+        //获取支付前状态
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Map<String,Object> good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_before = user.getBalance();
+        String order_state = order.get("order_state").toString();
+        Integer inventory_before = (Integer) good.get("inventory");
+
+        //获取支付后状态
+        Assert.assertTrue((Double)order.get("price")>balance_before);
+        Assert.assertEquals(400,orderService.payOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_after = user.getBalance();
+        Integer inventory_after = (Integer) good.get("inventory");
+        Assert.assertEquals(order_state,order.get("order_state").toString());
+        Assert.assertTrue(balance_before.equals(balance_after));
+        Assert.assertTrue(Objects.equals(inventory_before, inventory_after));
+    }
+
+    @Transactional
+    @Test
+    void payOrderGoodNotOnShell(){
+        //测试余额不足
+        String order_id = "0884013126529678";
+
+        //获取支付前状态
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Map<String,Object> good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_before = user.getBalance();
+        String order_state = order.get("order_state").toString();
+        Integer inventory_before = (Integer) good.get("inventory");
+
+        //获取支付后状态
+        Assert.assertEquals("已下架",good.get("good_state").toString());
+        Assert.assertEquals(400,orderService.payOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        good =(Map<String,Object>) goodService.getById(order.get("good_id").toString()).getObject();
+        Double balance_after = user.getBalance();
+        Integer inventory_after = (Integer) good.get("inventory");
+        Assert.assertEquals(order_state,order.get("order_state").toString());
+        Assert.assertTrue(balance_before.equals(balance_after));
+        Assert.assertTrue(Objects.equals(inventory_before, inventory_after));
     }
 
     @Transactional
@@ -126,16 +253,5 @@ class OrderServiceTest {
     @Test
     void getRefundingOrder() {
     }
-
-    @Test
-    void setOrderState() {
-    }
-
-    @Test
-    void getAllByBuyer() {
-    }
-
-    @Test
-    void getAllBySeller() {
-    }
+    
 }

@@ -121,11 +121,12 @@ public class OrderService implements IDGenenrator{
         if(goodRepo.isEnough(order.getGoodId(),order.getNum())>0){
             if(userRepo.getBalance(order.getBuyerId())>=order.getPrice()){
                 order.setOrderState("待发货");
-//                User user = userRepo.getOne(order.getBuyerId());
-//                user.setBalance(user.getBalance()-order.getPrice());
-//                userRepo.save(user);
-                userRepo.deleteBalance(order.getBuyerId(),order.getPrice());
-                goodRepo.setInventory(order.getGoodId(), goodRepo.getInventory(order.getGoodId())-order.getNum());
+                User user = userRepo.getOne(order.getBuyerId());
+                user.setBalance(user.getBalance()-order.getPrice());
+                userRepo.save(user);
+                Good good = goodRepo.getOne(order.getGoodId());
+                good.setInventory(good.getInventory()-order.getNum());
+                goodRepo.save(good);
                 orderRepo.save(order);
                 return ResultFactory.buildResult(200,"支付成功",null);
             }else{
