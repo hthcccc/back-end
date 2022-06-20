@@ -61,7 +61,6 @@ class OrderServiceTest {
     @Transactional
     @Test
     void generateOrder() {
-
         //测试正常交易
         String order_id = orderService.generateOrder("hth","0840289660372971","上海市杨浦区",2).getObject().toString();
         Map<String,Object> order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
@@ -73,11 +72,13 @@ class OrderServiceTest {
         Assert.assertTrue(start_date.plusMillis(TimeUnit.SECONDS.toMillis(60)).isAfter(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8))));
 
         //测试购买自己的商品
+        Assert.assertNull(orderService.generateOrder("hth","0727295953745280","上海市杨浦区",2).getObject());
 
         //测试购买 非上架中 的商品
-
+        Assert.assertNull(orderService.generateOrder("hth","4028936603729721","上海市杨浦区",1).getObject());
 
         //测试购买超过库存的商品
+        Assert.assertNull(orderService.generateOrder("hth","0840289660372971","上海市杨浦区",10001).getObject());
     }
 
     @Test

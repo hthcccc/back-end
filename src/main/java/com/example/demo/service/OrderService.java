@@ -102,7 +102,7 @@ public class OrderService implements IDGenenrator{
                 return ResultFactory.buildFailResult("大于商品库存，交易失败");
             }
             order.setPrice(goodRepo.calculateSum(g_id,num));
-            order.setStartDate(Instant.now());
+            order.setStartDate(Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8)));
             order.setBuyerAddress(buy_address);
             order.setSellerAddress(goodRepo.findById(g_id).get().getShip_address());
             order.setOrderState("未支付");
