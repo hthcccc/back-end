@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.model.User;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +22,8 @@ class RefundServiceTest {
     RefundService refundService;
     @Autowired
     OrderService orderService;
+    @Autowired
+    UserService userService;
 
     @Transactional
     @Test
@@ -50,12 +53,47 @@ class RefundServiceTest {
     @Transactional
     @Test
     void cancelRefund() {
+        //首先造一条退款申请
+        String order_id = "6631065311033663";
+        refundService.submitRefund(order_id,"仅供测试");
+        //取消退款前
+        Map<String,Object> order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_before = order.get("order_state").toString();
+        Assert.assertEquals("y",order.get("isRefunding").toString());
+        //取消退款后
+        refundService.cancelRefund(order_id);
+        order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_date_after = order.get("order_state").toString();
+        Map<String,Object> refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertNull(refund);
+        Assert.assertEquals("n",order.get("isRefunding").toString());
+        Assert.assertEquals(order_state_before,order_date_after);
     }
 
+    @Transactional
     @Test
     void permitRefund() {
+        //首先造一条退款申请
+        String order_id = "6631065311033663";
+        refundService.submitRefund(order_id,"仅供测试");
+        Map<String,Object> order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String user_id = order.get("buyer_id").toString();
+        Double price = (Double) order.get("price");
+        User user = (User)userService.getById(user_id).getObject();
+        Double balance_before = user.getBalance();
+
+        refundService.permitRefund(order_id);
+        order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state = order.get("order_state").toString();
+        String isRefunding = order.get("isRefunding").toString();
+        user = (User)userService.getById(user_id).getObject();
+        Double balance_after = user.getBalance();
+        Assert.assertEquals("已退款",order_state);
+        Assert.assertEquals("n",isRefunding);
+        Assert.assertTrue((balance_before+price)==balance_after);
     }
 
+    @Transactional
     @Test
     void refuseRefund() {
     }
