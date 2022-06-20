@@ -220,10 +220,10 @@ public class GoodService implements IDGenenrator{
             }
             if(name!=null&&!name.isEmpty()&&!name.equals("")){good.setName(name);}
             if(part!=null&&!part.isEmpty()&&!part.equals("")){good.setPart(part);}
-            if(inventory>=0){good.setInventory(inventory);}
-            if(!info.isEmpty()&&!info.equals("")){good.setInfo(info);}
-            if(prize>0){good.setPrice(prize);}
-            if(freight>=0){good.setFreight(freight);}
+            if(inventory!=null&&inventory>=0){good.setInventory(inventory);}
+            if(info!=null&&!info.isEmpty()&&!info.equals("")){good.setInfo(info);}
+            if(prize!=null&&prize>0){good.setPrice(prize);}
+            if(freight!=null&&freight>=0){good.setFreight(freight);}
             if(addr!=null&&!addr.isEmpty()&&!addr.equals("")){good.setShip_address(addr);}
             good.setGoodState("待审核");
             goodRepo.save(good);
