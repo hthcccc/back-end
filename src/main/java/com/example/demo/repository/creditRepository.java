@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 public interface creditRepository extends JpaRepository<Credit, String> {
-    @Transactional
+
     @Query("select a from Credit a where a.uid=?1")
     public List<Credit> getCreditHistory(String user_id);
 }

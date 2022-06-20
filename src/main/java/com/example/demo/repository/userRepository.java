@@ -31,7 +31,6 @@ public interface userRepository extends JpaRepository<User,String> {
     @Query(value = "select * from user where user_id in (select subscribed_id from subscribe where user_id=?)",nativeQuery = true)
     List<User> getSubscribe(String user_id);
 
-    @Transactional
     @Modifying
     @Query("update User u set u.balance=u.balance-?2 where u.userId=?1")
     void deleteBalance(String user_id,Double cost);

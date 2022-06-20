@@ -18,7 +18,7 @@ public interface addressRepository extends JpaRepository<Address, AddressId> {
 //        }
 //        return false;
 //    }
-    @Transactional
+
     @Query("select a.id.address from Address a where a.id.userId=?1")
     public List<String> getAllAddress(String user_id);
 }
