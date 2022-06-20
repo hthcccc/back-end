@@ -93,7 +93,7 @@ public class VerificationService implements IDGenenrator {
                 user.setName("未取名用户");
                 //user.setUserId(uid);
                 user.setPhone(phone);
-                user.setBalance(0.0);
+                user.setCredit(4.5);
                 userRepo.save(user);
                 return ResultFactory.buildResult(200,"新用户注册成功",user.getUserId());
             }

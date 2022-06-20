@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -70,13 +71,20 @@ class UserServiceTest {
 
     @Test
     void getBalance() {
+        Assert.assertEquals(10000,userService.getBalance("lh").longValue());
     }
 
     @Test
     void checkPasswordById() {
+        Assert.assertEquals(200,userService.checkPasswordById("hth","123456").getCode());
+        Assert.assertEquals(401,userService.checkPasswordById("hth","1234567").getCode());
+        Assert.assertEquals(402,userService.checkPasswordById("hth1","123456").getCode());
     }
 
     @Test
     void getAllAddress() {
+        List<String> addresses= new ArrayList<>();
+        addresses.add("上海市嘉定区曹安公路4800号");
+        Assert.assertEquals(addresses,(List<String>) userService.getAllAddress("lh").getObject());
     }
 }
