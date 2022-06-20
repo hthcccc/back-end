@@ -243,15 +243,61 @@ class OrderServiceTest {
     @Transactional
     @Test
     void ackOrder() {
+        //测试正常情况
+        String order_id = "6631065311033663";
+        //确认收获前
+        Map<String,Object> order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state = order.get("order_state").toString();
+        Assert.assertEquals("待收货",order_state);
+        //确认收货后
+        orderService.ackOrder(order_id);
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        order_state = order.get("order_state").toString();
+        Assert.assertEquals("已收货",order_state);
+
+        //测试异常状态情况
+        order_id = "0884013126529678";
+        //确认收获前
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state_before = order.get("order_state").toString();
+        Assert.assertTrue(!order_state_before.equals("待收货"));
+        //确认收货后
+        orderService.ackOrder(order_id);
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state_after = order.get("order_state").toString();
+        Assert.assertEquals(order_state_before,order_state_after);
     }
 
     @Transactional
     @Test
     void sendPackage() {
+        //测试正常情况
+        String order_id = "2077079906043517";
+        //确认收获前
+        Map<String,Object> order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state = order.get("order_state").toString();
+        Assert.assertEquals("待发货",order_state);
+        //确认收货后
+        orderService.sendPackage(order_id);
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        order_state = order.get("order_state").toString();
+        Assert.assertEquals("待收货",order_state);
+
+        //测试异常状态情况
+        order_id = "0884013126529678";
+        //发货前
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state_before = order.get("order_state").toString();
+        Assert.assertTrue(!order_state_before.equals("待发货"));
+        //发货后
+        orderService.sendPackage(order_id);
+        order = (Map<String,Object>)orderService.getOrderInfo(order_id).getObject();
+        String order_state_after = order.get("order_state").toString();
+        Assert.assertEquals(order_state_before,order_state_after);
     }
 
     @Test
     void getRefundingOrder() {
     }
-    
+
 }

@@ -141,7 +141,9 @@ public class OrderService implements IDGenenrator{
     public Result ackOrder(String order_id){
         if(orderRepo.existsById(order_id)){
             if(orderRepo.findById(order_id).get().getOrderState().equals("待收货")){
-                setOrderState(order_id,"已收货");
+                TradeOrder order = orderRepo.findById(order_id).get();
+                order.setOrderState("已收货");
+                orderRepo.save(order);
                 return ResultFactory.buildResult(200,"确认收货成功",null);
             }
         }
@@ -151,7 +153,9 @@ public class OrderService implements IDGenenrator{
     public Result sendPackage(String order_id){
         if(orderRepo.existsById(order_id)){
             if(orderRepo.findById(order_id).get().getOrderState().equals("待发货")){
-                setOrderState(order_id,"待收货");
+                TradeOrder order = orderRepo.findById(order_id).get();
+                order.setOrderState("待收货");
+                orderRepo.save(order);
                 return ResultFactory.buildResult(200,"成功发货",null);
             }
         }
