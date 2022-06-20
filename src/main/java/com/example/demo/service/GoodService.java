@@ -346,9 +346,9 @@ public class GoodService implements IDGenenrator{
     public Result allowGood(String good_id,String plan_id){
         if(goodRepo.existsById(good_id)){
             Good good=goodRepo.findById(good_id).get();
-            if(good.getGoodState().equals("待审核")){
+            if(good.getGoodState().equals("待审核")||good.getGoodState().equals("待整改")){
                 if(plan_id.equals("0")){
-                    goodRepo.setState(good_id, "下架中");
+                    goodRepo.setState(good_id, "已下架");
                     return ResultFactory.buildResult(201, "商品下架", null);
                 }else if(plan_id.equals("1")) {
                     goodRepo.setState(good_id, "上架中");

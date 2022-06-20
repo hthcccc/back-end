@@ -162,7 +162,7 @@ class GoodServiceTest {
     void takeDownGood(){
         //测试用例
         String good_id = "0840289660372971";
-        //测试上架后状态
+        //测试下架后状态
         goodService.allowGood(good_id,"0");
         Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
         String  good_state =  result.get("good_state").toString();
@@ -170,11 +170,11 @@ class GoodServiceTest {
 
         //测试待整改用例
         good_id = "4028936603729721";
-        //测试上架后状态
-        goodService.allowGood(good_id,"1");
+        //测试下架后状态
+        goodService.allowGood(good_id,"0");
         result = (Map<String,Object>)goodService.getById(good_id).getObject();
         good_state = result.get("good_state").toString();
-        Assert.assertEquals("上架中",good_state);
+        Assert.assertEquals("已下架",good_state);
     }
 
     @Transactional
@@ -182,7 +182,7 @@ class GoodServiceTest {
     void requireGoodForSetting(){
         //测试用例
         String good_id = "0840289660372971";
-        //测试上架后状态
+        //测试整改后状态
         goodService.allowGood(good_id,"2");
         Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
         String  good_state =  result.get("good_state").toString();
@@ -190,10 +190,10 @@ class GoodServiceTest {
 
         //测试待整改用例
         good_id = "4028936603729721";
-        //测试上架后状态
-        goodService.allowGood(good_id,"1");
+        //测试整改后状态
+        goodService.allowGood(good_id,"2");
         result = (Map<String,Object>)goodService.getById(good_id).getObject();
         good_state = result.get("good_state").toString();
-        Assert.assertEquals("上架中",good_state);
+        Assert.assertEquals("待整改",good_state);
     }
 }
