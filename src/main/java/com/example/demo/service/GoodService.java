@@ -175,7 +175,7 @@ public class GoodService implements IDGenenrator{
             good.setIsRec("0");
             goodRepo.save(good);
             setUrl(good.getId(),file);
-            return ResultFactory.buildResult(200,"发布成功",null);
+            return ResultFactory.buildResult(200,"发布成功",good.getId());
         }
         return ResultFactory.buildFailResult("不存在该商品");
     }

@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.Instant;
@@ -86,13 +87,29 @@ class GoodServiceTest {
 
     @Test
     void getGoodOnShellByPart() {
+        List<Map<String,Object>> goods = (List<Map<String,Object>>)goodService.getGoodOnShellByPart("服装").getObject();
+        for(Map<String,Object> good : goods){
+            Assert.assertEquals("上架中",good.get("good_state").toString());
+            Assert.assertEquals("服装",good.get("part").toString());
+        }
     }
 
+    @Transactional
     @Test
     void releaseGood() {
+        String good_id = goodService.releaseGood("lh","仅供测试","玩具",10000,"仅供测试","上海市",10.0,1.0,null).getObject().toString();
+        Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        String name = result.get("name").toString();
+        String state = result.get("good_state").toString();
+        String seller_id =  result.get("seller_id").toString();
+        Assert.assertEquals("仅供测试",name);
+        Assert.assertEquals("lh",seller_id);
+        Assert.assertEquals("待审核",state);
     }
 
     @Test
     void calculateSum() {
+        Double sum = (Double) goodService.calculateSum("0840289660372971",2).getObject();
+        Assert.assertTrue(sum==21);
     }
 }
