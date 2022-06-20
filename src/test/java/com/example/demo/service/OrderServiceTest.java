@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.model.User;
 import io.swagger.models.auth.In;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ class OrderServiceTest {
     OrderService orderService;
     @Autowired
     RefundService refundService;
+    @Autowired
+    UserService userService;
 
     @Test
     void getOrderInfo() {
@@ -81,14 +84,41 @@ class OrderServiceTest {
         Assert.assertNull(orderService.generateOrder("hth","0840289660372971","上海市杨浦区",10001).getObject());
     }
 
+    @Transactional
     @Test
-    void payOrder() {
+    void payOrder(){
+        //测试正常情况
+        payOrderNormal();
     }
 
+    @Transactional
+    @Test
+    void payOrderNormal() {
+        //测试正常用例
+        String order_id = "0277495394409761";
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo("0277495394409761").getObject();
+        User user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Double balance_before = user.getBalance();
+        Double price = (Double) order.get("price");
+
+        Assert.assertEquals(200,orderService.payOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo("0277495394409761").getObject();
+        user =(User) userService.getById(order.get("buyer_id").toString()).getObject();
+        Double balance_after = user.getBalance();
+        System.out.println(balance_before-price);
+        System.out.println(balance_after);
+        Assert.assertEquals("待发货",order.get("order_state").toString());
+        Assert.assertTrue((double) (balance_before-price)==(double)balance_after);
+
+
+    }
+
+    @Transactional
     @Test
     void ackOrder() {
     }
 
+    @Transactional
     @Test
     void sendPackage() {
     }
