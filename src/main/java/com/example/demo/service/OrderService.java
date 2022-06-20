@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class OrderService implements IDGenenrator{
@@ -67,10 +68,12 @@ public class OrderService implements IDGenenrator{
         if(!refundRepo.existsById(order_id)){
             return ResultFactory.buildResult(200,"没退款过",null);
         }
-        if(order.getOrderState().equals("已退款")){
-            return ResultFactory.buildResult(201,"退款过",null);
+        else if(refundRepo.findById(order.getId()).get().getRefundState().equals("待审核")||
+                refundRepo.findById(order.getId()).get().getRefundState().equals("卖家批准")||
+                refundRepo.findById(order.getId()).get().getRefundState().equals("卖家驳回")){
+            return ResultFactory.buildResult(201,"退款申诉过",null);
         }
-        if(refundRepo.findById(order.getId()).get().getRefundState().equals("仲裁批准")||
+        else if(refundRepo.findById(order.getId()).get().getRefundState().equals("仲裁批准")||
                 refundRepo.findById(order.getId()).get().getRefundState().equals("仲裁驳回")){
             return ResultFactory.buildResult(202,"已仲裁过",null);
         }
