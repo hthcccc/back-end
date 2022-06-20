@@ -112,4 +112,28 @@ class GoodServiceTest {
         Double sum = (Double) goodService.calculateSum("0840289660372971",2).getObject();
         Assert.assertTrue(sum==21);
     }
+
+
+    @Transactional
+    @Test
+    void setGood() {
+        //测试用例
+        String good_id = "0840289660372971";
+        //测试前状态
+        Map<String,Object> origin = (Map<String,Object>)goodService.getById(good_id).getObject();
+        Integer inventory_origin = (Integer) origin.get("inventory");
+        //测试后验证
+        goodService.setGood(good_id,"仅供测试1","玩具",-1,null,null,-1.0,-1.0,null);
+        Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
+        String name = result.get("name").toString();
+        String state = result.get("good_state").toString();
+        String id =  result.get("good_id").toString();
+        String part =  result.get("part").toString();
+        Integer inventory = (Integer) result.get("inventory");
+        Assert.assertEquals("仅供测试1",name);
+        Assert.assertEquals(good_id,id);
+        Assert.assertEquals("待审核",state);
+        Assert.assertEquals("玩具",part);
+        Assert.assertTrue(inventory==inventory_origin);
+    }
 }
