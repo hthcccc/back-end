@@ -189,11 +189,11 @@ public class UserService implements IDGenenrator{
                 }
             }
             else {
-                return ResultFactory.buildFailResult("密码错误");
+                return ResultFactory.buildResult(401,"密码错误",null);
             }
         }
         else{
-            return ResultFactory.buildFailResult("用户id不存在");
+            return ResultFactory.buildResult(402,"用户id不存在",null);
         }
     }
 
