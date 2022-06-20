@@ -36,7 +36,7 @@ class UserServiceTest {
 
         user = (User) userService.getById("hjs").getObject();
         Assert.assertEquals("胡劲松",user.getName());
-        Assert.assertTrue(user.getName().equals("黄天浩"));
+        Assert.assertTrue(!user.getName().equals("黄天浩"));
 
         Assert.assertNull(userService.getById("hth1").getObject());
     }
