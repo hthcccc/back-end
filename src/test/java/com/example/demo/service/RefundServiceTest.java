@@ -119,7 +119,7 @@ class RefundServiceTest {
     }
 
     /**
-     * 系统测试
+     * 集成测试
      */
     @Transactional
     @Test
