@@ -1,6 +1,7 @@
 package com.example.demo.IntegrationTest;
 
 import com.example.demo.DemoApplication;
+import com.example.demo.model.User;
 import com.example.demo.service.GoodService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.RefundService;
@@ -89,5 +90,46 @@ public class OrderTest {
         order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         String order_state_3 = order.get("order_state").toString();
         Assert.assertEquals("已收货",order_state_3);
+    }
+
+    /**
+     * 集成测试
+     * 发货——退款申请——卖家驳回——买家取消——再次申请——卖家驳回——提交仲裁——仲裁批准（已退款）
+     */
+    @Transactional
+    @Test
+    public void OrderCase3(){
+        //测试初态
+        String order_id = "2077079906043517";
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        Double price = (Double)order.get("price");
+        String user_id = order.get("buyer_id").toString();
+        User user = (User)userService.getById(user_id).getObject();
+        Double balance_before = user.getBalance();
+        String order_state_0 = order.get("order_state").toString();
+        Assert.assertEquals("待发货",order_state_0);
+
+        //测试发货
+        orderService.sendPackage(order_id);
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_1 = order.get("order_state").toString();
+        Assert.assertEquals("待收货",order_state_1);
+
+        //流程测试
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
+        Assert.assertEquals(200,refundService.permitArbitration(order_id).getCode());
+
+        //测试末态
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_2 = order.get("order_state").toString();
+        Assert.assertEquals("已退款",order_state_2);
+        user = (User)userService.getById(user_id).getObject();
+        Double balance_after = user.getBalance();
+        Assert.assertTrue((balance_before+price)==balance_after);
     }
 }
