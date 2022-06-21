@@ -46,7 +46,7 @@ class GoodServiceTest {
         }
     }
 
-    
+
     @Transactional
     @Test
     void browseGood() {
