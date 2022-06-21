@@ -41,10 +41,24 @@ public class RefundTest {
         Double balance_before = user.getBalance();
         //流程测试
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Map<String,Object> refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertNull(refundService.getRefundInfo(order_id).getObject());
+
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.permitRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家批准",refund.get("refund_state").toString());
+
         //获取测试后状态
         order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         String order_state = order.get("order_state").toString();
@@ -72,12 +86,32 @@ public class RefundTest {
         Double balance_before = user.getBalance();
         //流程测试
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Map<String,Object> refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertNull(refundService.getRefundInfo(order_id).getObject());
+
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待仲裁",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.permitArbitration(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("仲裁批准",refund.get("refund_state").toString());
+
         //获取测试后状态
         order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         String order_state = order.get("order_state").toString();
@@ -104,10 +138,24 @@ public class RefundTest {
         Double balance_before = user.getBalance();
         //流程测试
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Map<String,Object> refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertNull(refundService.getRefundInfo(order_id).getObject());
+
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.permitRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家批准",refund.get("refund_state").toString());
+
         //获取测试后状态
         order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         String order_state = order.get("order_state").toString();
@@ -135,12 +183,32 @@ public class RefundTest {
         Double balance_before = user.getBalance();
         //流程测试
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Map<String,Object> refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertNull(refundService.getRefundInfo(order_id).getObject());
+
         Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待审核",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("卖家驳回",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("待仲裁",refund.get("refund_state").toString());
+
         Assert.assertEquals(200,refundService.refuseArbitration(order_id).getCode());
+        refund = (Map<String,Object>) refundService.getRefundInfo(order_id).getObject();
+        Assert.assertEquals("仲裁驳回",refund.get("refund_state").toString());
+
         //获取测试后状态
         order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
         String order_state_after = order.get("order_state").toString();
