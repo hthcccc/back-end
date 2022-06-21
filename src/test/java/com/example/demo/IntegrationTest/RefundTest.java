@@ -129,7 +129,7 @@ public class RefundTest {
      */
     @Transactional
     @Test
-    public void RefundCase4() {
+    public void RefundCase3() {
         String order_id = "6631065311033663";
         //获取测试前状态
         Map<String,Object> order = (Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
