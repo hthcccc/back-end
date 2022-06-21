@@ -218,7 +218,7 @@ public class OrderTest {
     }
 
     /**
-     * 集成测试
+     * 集成测试（这个不用测，不用写文档）
      * 下单——支付——发货——收货
      */
     @Transactional
