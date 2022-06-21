@@ -46,9 +46,8 @@ class GoodServiceTest {
         }
     }
 
-    /**
-     集成测试
-     */
+    
+    @Transactional
     @Test
     void browseGood() {
         //获取当前时间戳
