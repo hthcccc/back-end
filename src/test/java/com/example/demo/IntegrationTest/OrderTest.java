@@ -338,4 +338,42 @@ public class OrderTest {
         Assert.assertEquals("n",isRefunding);
         Assert.assertTrue(balance_0.equals(balance_1));
     }
+
+    /**
+     * 集成测试
+     * 下单——支付——发货——退款申请——卖家驳回——买家取消——再次申请
+     * ——卖家驳回——仲裁申请——仲裁批准（已退款）
+     */
+    @Transactional
+    @Test
+    public void OrderCase10(){
+        //测试用例
+        String good_id = "0840289660372971";
+        String user_id = "hth";
+        Integer num = 1;
+        User user = (User) userService.getById(user_id).getObject();
+        Double balance_0 = user.getBalance();
+        //创建订单后
+        String order_id = orderService.generateOrder(user_id,good_id,"上海市杨浦区",num).getObject().toString();
+        //测试支付订单后
+        orderService.payOrder(order_id);
+        //测试发货收货后
+        Assert.assertEquals(200,orderService.sendPackage(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
+        Assert.assertEquals(200,refundService.permitArbitration(order_id).getCode());
+
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_1 = order.get("order_state").toString();
+        String isRefunding = order.get("isRefunding").toString();
+        user = (User) userService.getById(user_id).getObject();
+        Double balance_1 = user.getBalance();
+        Assert.assertEquals("已退款",order_state_1);
+        Assert.assertEquals("n",isRefunding);
+        Assert.assertTrue(balance_0.equals(balance_1));
+    }
 }
