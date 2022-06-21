@@ -38,4 +38,68 @@ public class GoodTest {
         String good_state_1 = good.get("good_state").toString();
         Assert.assertEquals("上架中",good_state_1);
     }
+
+    /**
+     * 登录——发布——审核下架
+     */
+    @Transactional
+    @Test
+    public void GoodCase2(){
+        String user_id = "hth";
+        String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
+        Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_0 = good.get("good_state").toString();
+        Assert.assertEquals("待审核",good_state_0);
+
+        goodService.allowGood(good_id,"0");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_1 = good.get("good_state").toString();
+        Assert.assertEquals("已下架",good_state_1);
+    }
+
+    /**
+     * 登录——发布——整改——审核上架
+     */
+    @Transactional
+    @Test
+    public void GoodCase3(){
+        String user_id = "hth";
+        String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
+        Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_0 = good.get("good_state").toString();
+        Assert.assertEquals("待审核",good_state_0);
+
+        goodService.allowGood(good_id,"2");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_1 = good.get("good_state").toString();
+        Assert.assertEquals("待整改",good_state_1);
+
+        goodService.allowGood(good_id,"1");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_2 = good.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state_2);
+    }
+
+    /**
+     * 登录——发布——整改——审核下架
+     */
+    @Transactional
+    @Test
+    public void GoodCase4(){
+        String user_id = "hth";
+        String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
+        Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_0 = good.get("good_state").toString();
+        Assert.assertEquals("待审核",good_state_0);
+
+        goodService.allowGood(good_id,"2");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_1 = good.get("good_state").toString();
+        Assert.assertEquals("待整改",good_state_1);
+
+        goodService.allowGood(good_id,"0");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_2 = good.get("good_state").toString();
+        Assert.assertEquals("已下架",good_state_2);
+    }
 }
