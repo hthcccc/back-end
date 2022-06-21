@@ -2,10 +2,7 @@ package com.example.demo.SystemTest;
 
 import com.example.demo.DemoApplication;
 import com.example.demo.model.Good;
-import com.example.demo.service.GoodService;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.RefundService;
-import com.example.demo.service.UserService;
+import com.example.demo.service.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +11,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = DemoApplication.class)
@@ -28,7 +27,12 @@ public class SystemTest {
     UserService userService;
     @Autowired
     GoodService goodService;
+    @Autowired
+    HistoryService historyService;
 
+    /**
+     * 
+     */
     @Transactional
     @Test
     public void Procedure1(){
@@ -67,5 +71,45 @@ public class SystemTest {
         String good_state_3 = good.get("good_state").toString();
         Assert.assertEquals("上架中",good_state_3);
 
+        //浏览商品
+        Instant testTime = Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8));
+        goodService.browseGood(user_id,good_id).getObject();
+        boolean isUpdated = false;
+        List<Map<String,Object>> histories = (List<Map<String,Object>>)historyService.getHistory("hth").getObject();
+        for(Map<String,Object> history : histories){
+            if(history.get("good_id").toString().equals("0762113045860999")){
+                Instant date = (Instant) history.get("date");
+                if(testTime.plusMillis(TimeUnit.SECONDS.toMillis(60)).isAfter(date)){
+                    isUpdated=true;
+                    break;
+                }
+            }else {
+                continue;
+            }
+        }
+        Assert.assertTrue(isUpdated);
+
+        //创建订单
+        Integer num =1;
+        String order_id = orderService.generateOrder(user_id,good_id,"上海市杨浦区",num).getObject().toString();
+
+        //支付订单
+        Assert.assertEquals(200,orderService.payOrder(order_id).getCode());
+
+        //发货收货——一系列退款流程——收货
+        Assert.assertEquals(200,orderService.sendPackage(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
+        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
+        Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
+        Assert.assertEquals(200,refundService.refuseArbitration(order_id).getCode());
+        Assert.assertEquals(200,orderService.ackOrder(order_id).getCode());
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_1 = order.get("order_state").toString();
+        String isRefunding = order.get("isRefunding").toString();
+        Assert.assertEquals("已收货",order_state_1);
+        Assert.assertEquals("n",isRefunding);
     }
 }
