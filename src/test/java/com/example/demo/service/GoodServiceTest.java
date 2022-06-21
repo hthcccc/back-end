@@ -50,20 +50,22 @@ class GoodServiceTest {
     @Transactional
     @Test
     void browseGood() {
+        String user_id = "hth";
+        String good_id = "0762113045860999";
         //获取当前时间戳
         Instant testTime = Instant.now().plusMillis(TimeUnit.HOURS.toMillis(8));
         System.out.println("testTime= "+testTime);
 
         //测试是否获取商品信息
-        Map<String,Object> good = (Map<String,Object>)goodService.browseGood("hth","0762113045860999").getObject();
-        Assert.assertEquals("0762113045860999",good.get("good_id").toString());
+        Map<String,Object> good = (Map<String,Object>)goodService.browseGood(user_id,good_id).getObject();
+        Assert.assertEquals(good_id,good.get("good_id").toString());
         Assert.assertEquals("孔雀蓝裤子",good.get("name").toString());
 
         //测试历史记录有无更新
         boolean isUpdated = false;
-        List<Map<String,Object>> histories = (List<Map<String,Object>>)historyService.getHistory("hth").getObject();
+        List<Map<String,Object>> histories = (List<Map<String,Object>>)historyService.getHistory(user_id).getObject();
         for(Map<String,Object> history : histories){
-            if(history.get("good_id").toString().equals("0762113045860999")){
+            if(history.get("good_id").toString().equals(good_id)){
                 Instant date = (Instant) history.get("date");
                 if(testTime.plusMillis(TimeUnit.SECONDS.toMillis(60)).isAfter(date)){
                     isUpdated=true;
@@ -78,9 +80,10 @@ class GoodServiceTest {
 
     @Test
     void getGoodByUser() {
-        List<Good> goods = (List<Good>) goodService.getGoodByUser("hth").getObject();
+        String user_id ="hth";
+        List<Good> goods = (List<Good>) goodService.getGoodByUser(user_id).getObject();
         for(Good good : goods){
-            Assert.assertEquals("hth",good.getSellerId());
+            Assert.assertEquals(user_id,good.getSellerId());
         }
     }
 
@@ -96,13 +99,14 @@ class GoodServiceTest {
     @Transactional
     @Test
     void releaseGood() {
-        String good_id = goodService.releaseGood("lh","仅供测试","玩具",10000,"仅供测试","上海市",10.0,1.0,null).getObject().toString();
+        String user_id = "lh";
+        String good_id = goodService.releaseGood(user_id,"仅供测试","玩具",10000,"仅供测试","上海市",10.0,1.0,null).getObject().toString();
         Map<String,Object> result = (Map<String,Object>)goodService.getById(good_id).getObject();
         String name = result.get("name").toString();
         String state = result.get("good_state").toString();
         String seller_id =  result.get("seller_id").toString();
         Assert.assertEquals("仅供测试",name);
-        Assert.assertEquals("lh",seller_id);
+        Assert.assertEquals(user_id,seller_id);
         Assert.assertEquals("待审核",state);
     }
 
