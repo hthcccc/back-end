@@ -58,7 +58,7 @@ public class GoodTest {
     }
 
     /**
-     * 登录——发布——整改——审核上架
+     * 登录——发布——整改——修改商品信息——审核上架
      */
     @Transactional
     @Test
@@ -74,14 +74,21 @@ public class GoodTest {
         String good_state_1 = good.get("good_state").toString();
         Assert.assertEquals("待整改",good_state_1);
 
-        goodService.allowGood(good_id,"1");
+        //修改商品
+        goodService.setGood(good_id,"仅供测试1",null,-1,null,null,-1.0,-1.0,null);
         good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_2 = good.get("good_state").toString();
-        Assert.assertEquals("上架中",good_state_2);
+        Assert.assertEquals("待审核",good_state_2);
+        Assert.assertEquals("仅供测试1",good.get("name").toString());
+
+        goodService.allowGood(good_id,"1");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_3 = good.get("good_state").toString();
+        Assert.assertEquals("上架中",good_state_3);
     }
 
     /**
-     * 登录——发布——整改——审核下架
+     * 登录——发布——整改——修改商品信息——审核下架
      */
     @Transactional
     @Test
@@ -97,9 +104,16 @@ public class GoodTest {
         String good_state_1 = good.get("good_state").toString();
         Assert.assertEquals("待整改",good_state_1);
 
-        goodService.allowGood(good_id,"0");
+        //修改商品
+        goodService.setGood(good_id,"仅供测试1",null,-1,null,null,-1.0,-1.0,null);
         good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_2 = good.get("good_state").toString();
-        Assert.assertEquals("已下架",good_state_2);
+        Assert.assertEquals("待审核",good_state_2);
+        Assert.assertEquals("仅供测试1",good.get("name").toString());
+
+        goodService.allowGood(good_id,"0");
+        good = (Map<String, Object>) goodService.getById(good_id).getObject();
+        String good_state_3 = good.get("good_state").toString();
+        Assert.assertEquals("已下架",good_state_3);
     }
 }

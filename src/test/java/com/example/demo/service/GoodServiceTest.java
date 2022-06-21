@@ -150,10 +150,10 @@ class GoodServiceTest {
         //测试待整改用例
         good_id = "4028936603729721";
         //测试上架后状态
-        goodService.allowGood(good_id,"1");
+        Assert.assertEquals(400,goodService.allowGood(good_id,"1").getCode());
         result = (Map<String,Object>)goodService.getById(good_id).getObject();
         good_state = result.get("good_state").toString();
-        Assert.assertEquals("上架中",good_state);
+        Assert.assertEquals("待整改",good_state);
     }
 
     @Transactional
@@ -170,10 +170,10 @@ class GoodServiceTest {
         //测试待整改用例
         good_id = "4028936603729721";
         //测试下架后状态
-        goodService.allowGood(good_id,"0");
+        Assert.assertEquals(400,goodService.allowGood(good_id,"2").getCode());
         result = (Map<String,Object>)goodService.getById(good_id).getObject();
         good_state = result.get("good_state").toString();
-        Assert.assertEquals("已下架",good_state);
+        Assert.assertEquals("待整改",good_state);
     }
 
     @Transactional
@@ -190,7 +190,7 @@ class GoodServiceTest {
         //测试待整改用例
         good_id = "4028936603729721";
         //测试整改后状态
-        goodService.allowGood(good_id,"2");
+        Assert.assertEquals(400,goodService.allowGood(good_id,"2").getCode());
         result = (Map<String,Object>)goodService.getById(good_id).getObject();
         good_state = result.get("good_state").toString();
         Assert.assertEquals("待整改",good_state);
