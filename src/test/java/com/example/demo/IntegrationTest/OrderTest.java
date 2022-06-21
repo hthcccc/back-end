@@ -215,8 +215,32 @@ public class OrderTest {
         Assert.assertTrue((good_price*num+freight)==price);
         Assert.assertTrue((inventory_1-num)==inventory_2);
         Assert.assertTrue((balance_1-price)==balance_2);
-
-
-
     }
+
+    /**
+     * 集成测试
+     * 购买——支付——发货——收货
+     */
+    @Transactional
+    @Test
+    public void OrderCase6(){
+        //测试用例
+        String good_id = "0840289660372971";
+        String user_id = "hth";
+        Integer num = 1;
+        //创建订单后
+        String order_id = orderService.generateOrder(user_id,good_id,"上海市杨浦区",num).getObject().toString();
+        //测试支付订单后
+        orderService.payOrder(order_id);
+        Map<String,Object> order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_0 = order.get("order_state").toString();
+        Assert.assertEquals("待发货",order_state_0);
+        //测试发货收货后
+        Assert.assertEquals(200,orderService.sendPackage(order_id).getCode());
+        Assert.assertEquals(200,orderService.ackOrder(order_id).getCode());
+        order =(Map<String,Object>) orderService.getOrderInfo(order_id).getObject();
+        String order_state_1 = order.get("order_state").toString();
+        Assert.assertEquals("已收货",order_state_1);
+    }
+
 }
