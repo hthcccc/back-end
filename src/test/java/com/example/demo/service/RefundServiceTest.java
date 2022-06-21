@@ -118,21 +118,7 @@ class RefundServiceTest {
         Assert.assertEquals("y",isRefunding);
     }
 
-    /**
-     * 集成测试
-     */
-    @Transactional
-    @Test
-    void RefundCase1() {
-        String order_id = "6631065311033663";
-        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
-        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
-        Assert.assertEquals(200,refundService.cancelRefund(order_id).getCode());
-        Assert.assertEquals(200,refundService.submitRefund(order_id,"仅供测试").getCode());
-        Assert.assertEquals(200,refundService.refuseRefund(order_id).getCode());
-        Assert.assertEquals(200,refundService.submitArbitration(order_id,"仅供测试",null).getCode());
-        Assert.assertEquals(200,refundService.permitArbitration(order_id).getCode());
-    }
+
 
 
 }
