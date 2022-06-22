@@ -28,6 +28,9 @@ public class GoodTest {
     @Test
     public void GoodCase1(){
         String user_id = "hth";
+        String pwd = "123456";
+        Assert.assertEquals(200,userService.checkPasswordById(user_id,pwd).getCode());
+
         String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
         Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_0 = good.get("good_state").toString();
@@ -46,6 +49,9 @@ public class GoodTest {
     @Test
     public void GoodCase2(){
         String user_id = "hth";
+        String pwd = "123456";
+        Assert.assertEquals(200,userService.checkPasswordById(user_id,pwd).getCode());
+
         String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
         Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_0 = good.get("good_state").toString();
@@ -64,6 +70,9 @@ public class GoodTest {
     @Test
     public void GoodCase3(){
         String user_id = "hth";
+        String pwd = "123456";
+        Assert.assertEquals(200,userService.checkPasswordById(user_id,pwd).getCode());
+
         String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
         Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_0 = good.get("good_state").toString();
@@ -94,6 +103,9 @@ public class GoodTest {
     @Test
     public void GoodCase4(){
         String user_id = "hth";
+        String pwd = "123456";
+        Assert.assertEquals(200,userService.checkPasswordById(user_id,pwd).getCode());
+        
         String good_id = goodService.releaseGood(user_id,"仅供测试","服装",10,"仅供测试","上海市",10.0,0.0,null).getObject().toString();
         Map<String,Object> good = (Map<String, Object>) goodService.getById(good_id).getObject();
         String good_state_0 = good.get("good_state").toString();
